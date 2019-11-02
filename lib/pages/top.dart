@@ -3,11 +3,10 @@ import 'package:flutter/material.dart';
 // Below: for mock implementation
 
 class SelectableSituation {
-  int index;
   String label;
   bool selected = false;
 
-  SelectableSituation(this.index, this.label);
+  SelectableSituation(this.label);
 }
 
 List<String> situations = [
@@ -38,10 +37,9 @@ class _TopPageState extends State<TopPage> {
   }
 
   void _loadChoices() {
-    List<SelectableSituation> rst = [];
-    situations.asMap().forEach((index, situation) {
-      rst.add(new SelectableSituation(index, situation));
-    });
+    List<SelectableSituation> rst = situations.map((situation) {
+      return new SelectableSituation(situation);
+    }).toList();
 
     setState(() => this._choices = rst);
   }

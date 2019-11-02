@@ -1,4 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_typeahead/flutter_typeahead.dart';
+
+class FetchedSiuation {
+  int id;
+  String label;
+
+  FetchedSiuation(this.id, this.label);
+}
+
+List<String> situations = [
+  'Before go to bed, 30 minutes',
+  'During commuting',
+  'Friday night',
+];
 
 
 class AddTaskPage extends StatefulWidget {
@@ -12,6 +26,30 @@ class AddTaskPage extends StatefulWidget {
 
 
 class _AddTaskPageState extends State<AddTaskPage> {
+
+  List<FetchedSiuation> _selectedSituations = [];
+
+  // In real implementation, fetch from DB or API
+  Future<List<FetchedSiuation>> fetchSituations(String inputedText) {
+    List<FetchedSiuation> rst = [];
+    situations.asMap().forEach((idx, label) {
+      rst.add(new FetchedSiuation(idx, label));
+    });
+
+    return new Future.delayed(new Duration(milliseconds: 50), (){
+      return rst;
+    });
+  }
+
+  List<Widget> situationChips() {
+    return this._selectedSituations.map((sit) {
+      return InputChip(
+        label: Text(sit.label),
+        labelStyle: TextStyle(color: Colors.black, fontSize: 16),
+      );
+    }).toList();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -19,10 +57,35 @@ class _AddTaskPageState extends State<AddTaskPage> {
         title: Text('Add new task'),
       ),
       body: Container(
+        padding: const EdgeInsets.all(16.0),
         child: Column(
           children: <Widget>[
-            Center(
-              child: Text('Add task page')
+            TextField(
+              decoration: InputDecoration(hintText: 'Task description'),
+            ),
+            TypeAheadField(
+              suggestionsCallback: (pattern) async {
+                return await fetchSituations(pattern);
+              },
+              itemBuilder: (context, suggestion) {
+                return ListTile(
+                  title: Text(suggestion.label),
+                );
+              },
+              onSuggestionSelected: (suggestion) {
+                setState(() {
+                  this._selectedSituations.add(suggestion);
+                });
+              }
+            ),
+            Expanded(
+              child: Wrap(
+                alignment: WrapAlignment.start,
+                spacing: 8.0,
+                runSpacing: 0.0,
+                direction: Axis.horizontal,
+                children: this.situationChips()
+              )
             )
           ]
         )
