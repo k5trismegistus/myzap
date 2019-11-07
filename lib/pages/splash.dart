@@ -32,6 +32,6 @@ class _SplashState extends State {
   }
 
   _moveToMainScreen() {
-    Navigator.pushReplacementNamed(context, '/top');
+    Navigator.pushReplacementNamed(context, '/login');
   }
 }

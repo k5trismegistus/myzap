@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'pages/splash.dart';
+import 'pages/login.dart';
 import 'pages/top.dart';
 import 'pages/addTaskPage.dart';
 
@@ -18,6 +19,7 @@ class MyzapApp extends StatelessWidget {
       initialRoute: '/',
       routes: {
         '/': (context) => Splash(),
+        '/login': (context) => Login(),
         '/top': (context) => TopPage(title: 'What to do now?'),
         '/addTask': (context) => AddTaskPage()
       }
