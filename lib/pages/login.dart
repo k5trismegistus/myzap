@@ -32,7 +32,7 @@ class _LoginState extends State {
     );
   }
 
-  Future<FirebaseUser> _handleSignIn() async {
+  Future<void> _handleSignIn() async {
     final GoogleSignInAccount googleUser = await _googleSignIn.signIn();
     final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
 
@@ -44,6 +44,6 @@ class _LoginState extends State {
     final FirebaseUser user = (await _auth.signInWithCredential(credential)).user;
     this._userStore.setUser(user);
 
-    return user;
+    Navigator.pushReplacementNamed(context, '/top');
   }
 }

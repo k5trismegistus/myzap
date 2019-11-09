@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:myzap/layouts/defaultLayout.dart';
 
 // Below: for mock implementation
 
@@ -80,11 +81,9 @@ class _TopPageState extends State<TopPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.title),
-      ),
-      body: Container(
+    return DefaultLayout(
+      title: widget.title,
+      page: Container(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
@@ -121,7 +120,7 @@ class _TopPageState extends State<TopPage> {
         onPressed: () => Navigator.pushNamed(context, '/addTask'),
         tooltip: 'Add new Task!',
         child: Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
+      ), //
     );
   }
 }

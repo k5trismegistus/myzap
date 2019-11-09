@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
+import 'package:myzap/layouts/defaultLayout.dart';
 
 class FetchedSiuation {
   int id;
@@ -52,11 +53,9 @@ class _AddTaskPageState extends State<AddTaskPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Add new task'),
-      ),
-      body: Container(
+    return DefaultLayout(
+      title: 'Add new task',
+      page: Container(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: <Widget>[
