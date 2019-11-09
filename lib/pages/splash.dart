@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'dart:async';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:myzap/utils/userStore.dart';
 
 
 class Splash extends StatefulWidget {
@@ -9,11 +10,12 @@ class Splash extends StatefulWidget {
 }
 
 class _SplashState extends State {
+  final FirebaseAuth _auth = FirebaseAuth.instance;
 
   @override
   void initState() {
     super.initState();
-    _startTimer();
+    _detectLogin();
   }
 
   @override
@@ -27,11 +29,14 @@ class _SplashState extends State {
     );
   }
 
-  _startTimer() async {
-    Timer(Duration(seconds: 2), () => _moveToMainScreen());
-  }
+  _detectLogin() async {
+    FirebaseUser user = await _auth.currentUser();
+    if (user == null) {
+      Navigator.pushReplacementNamed(context, '/login');
+      return;
+    }
 
-  _moveToMainScreen() {
-    Navigator.pushReplacementNamed(context, '/login');
+    UserStore().setUser(user);
+    Navigator.pushReplacementNamed(context, '/top');
   }
 }
