@@ -29,6 +29,13 @@ class DefaultLayout extends StatelessWidget {
           children: <Widget>[
             Image.network(user.photoUrl),
             Text(user.displayName),
+            FlatButton(
+              child: Text('Log out'),
+              onPressed: () async {
+                await UserStore().unsetUser();
+                Navigator.pushReplacementNamed(context, '/login');
+              },
+            )
           ],
         ),
       ),

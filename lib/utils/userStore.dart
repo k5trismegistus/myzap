@@ -10,12 +10,16 @@ class UserStore {
 
   UserStore._internal();
 
-
   void setUser(FirebaseUser user) {
     this._user = user;
   }
 
   FirebaseUser getUser() {
     return this._user;
+  }
+
+  void unsetUser() async {
+    await FirebaseAuth.instance.signOut();
+    this._user = null;
   }
 }
