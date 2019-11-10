@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:myzap/layouts/defaultLayout.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class FetchedSiuation {
   int id;
@@ -51,6 +52,11 @@ class _AddTaskPageState extends State<AddTaskPage> {
     }).toList();
   }
 
+  void handleAddTask() {
+    Firestore.instance.collection('testData').document()
+    .setData({ 'title': 'test' });
+  }
+
   @override
   Widget build(BuildContext context) {
     return DefaultLayout(
@@ -85,6 +91,10 @@ class _AddTaskPageState extends State<AddTaskPage> {
                 direction: Axis.horizontal,
                 children: this.situationChips()
               )
+            ),
+            FlatButton(
+              child: Text('Add'),
+              onPressed: this.handleAddTask,
             )
           ]
         )
