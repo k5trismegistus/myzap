@@ -3,11 +3,11 @@ import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:myzap/layouts/defaultLayout.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-class FetchedSiuation {
+class FetchedSituation {
   int id;
   String label;
 
-  FetchedSiuation(this.id, this.label);
+  FetchedSituation(this.id, this.label);
 }
 
 List<String> situations = [
@@ -29,13 +29,16 @@ class AddTaskPage extends StatefulWidget {
 
 class _AddTaskPageState extends State<AddTaskPage> {
 
-  List<FetchedSiuation> _selectedSituations = [];
+  final TextEditingController _desriptionInputController = TextEditingController();
+  final TextEditingController _situationInputController = TextEditingController();
+
+  List<FetchedSituation> _selectedSituations = [];
 
   // In real implementation, fetch from DB or API
-  Future<List<FetchedSiuation>> fetchSituations(String inputedText) {
-    List<FetchedSiuation> rst = [];
+  Future<List<FetchedSituation>> fetchSituations(String inputedText) {
+    List<FetchedSituation> rst = [];
     situations.asMap().forEach((idx, label) {
-      rst.add(new FetchedSiuation(idx, label));
+      rst.add(new FetchedSituation(idx, label));
     });
 
     return new Future.delayed(new Duration(milliseconds: 50), (){
@@ -54,7 +57,10 @@ class _AddTaskPageState extends State<AddTaskPage> {
 
   void handleAddTask() {
     Firestore.instance.collection('testData').document()
-    .setData({ 'title': 'test' });
+    .setData({
+      'description': this._desriptionInputController.text,
+      'situations': this._selectedSituations.map((s) => s.label).toList()
+    });
   }
 
   @override
@@ -66,9 +72,13 @@ class _AddTaskPageState extends State<AddTaskPage> {
         child: Column(
           children: <Widget>[
             TextField(
+              controller: _desriptionInputController,
               decoration: InputDecoration(hintText: 'Task description'),
             ),
             TypeAheadField(
+              textFieldConfiguration: TextFieldConfiguration(
+                controller: this._situationInputController,
+              ),
               suggestionsCallback: (pattern) async {
                 return await fetchSituations(pattern);
               },
@@ -79,6 +89,7 @@ class _AddTaskPageState extends State<AddTaskPage> {
               },
               onSuggestionSelected: (suggestion) {
                 setState(() {
+                  this._situationInputController.text = '';
                   this._selectedSituations.add(suggestion);
                 });
               }
