@@ -1,7 +1,9 @@
-class MyzapTask {
-  final String _id;
-  final String _label;
-  final List<MyzapSituation> _situations;
+import 'package:myzap/models/myzap_situation.dart';
 
-  MyZapTask(this._id, this._label, this._situations);
+class MyzapTask {
+  final String id;
+  final String label;
+  final List<MyzapSituation> situations;
+
+  MyzapTask(this.id, this.label, this.situations);
 }
