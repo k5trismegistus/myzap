@@ -6,8 +6,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 class FetchedSituation {
   int id;
   String label;
+  bool nullPlaceholder; // if this value is true, this instance represent special value.
 
-  FetchedSituation(this.id, this.label);
+  FetchedSituation(this.id, this.label, this.nullPlaceholder);
 }
 
 List<String> situations = [
@@ -38,8 +39,10 @@ class _AddTaskPageState extends State<AddTaskPage> {
   Future<List<FetchedSituation>> fetchSituations(String inputedText) {
     List<FetchedSituation> rst = [];
     situations.asMap().forEach((idx, label) {
-      rst.add(new FetchedSituation(idx, label));
+      rst.add(new FetchedSituation(idx, label, false));
     });
+
+    rst.add(new FetchedSituation(null, inputedText, true));
 
     return new Future.delayed(new Duration(milliseconds: 50), (){
       return rst;
@@ -83,11 +86,20 @@ class _AddTaskPageState extends State<AddTaskPage> {
                 return await fetchSituations(pattern);
               },
               itemBuilder: (context, suggestion) {
+                if (suggestion.nullPlaceholder) {
+                  return ListTile(
+                    title: Text("Add new situation \"${suggestion.label}\"")
+                  );
+                }
                 return ListTile(
                   title: Text(suggestion.label),
                 );
               },
               onSuggestionSelected: (suggestion) {
+                if (suggestion.nullPlaceholder) {
+                  print("Add new situation: ${suggestion.label}");
+                }
+
                 setState(() {
                   this._situationInputController.text = '';
                   this._selectedSituations.add(suggestion);
