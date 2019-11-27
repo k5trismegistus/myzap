@@ -58,12 +58,20 @@ class _AddTaskPageState extends State<AddTaskPage> {
     }).toList();
   }
 
-  void handleAddTask() {
-    Firestore.instance.collection('testData').document()
-    .setData({
-      'description': this._desriptionInputController.text,
-      'situations': this._selectedSituations.map((s) => s.label).toList()
+  String handleAddSituation(suggestion) {
+    var newSituationRef = Firestore.instance.collection('situations').document();
+    newSituationRef.setData({
+      'label': suggestion
     });
+    return newSituationRef.documentID;
+  }
+
+  void handleAddTask() {
+    Firestore.instance.collection('tasks').document()
+      .setData({
+        'description': this._desriptionInputController.text,
+        'situationIds': this._selectedSituations.map((s) => s.id).toList()
+      });
   }
 
   @override
@@ -96,8 +104,10 @@ class _AddTaskPageState extends State<AddTaskPage> {
                 );
               },
               onSuggestionSelected: (suggestion) {
+                print(suggestion);
                 if (suggestion.nullPlaceholder) {
-                  print("Add new situation: ${suggestion.label}");
+                  this.handleAddSituation(suggestion.label);
+                  return;
                 }
 
                 setState(() {
