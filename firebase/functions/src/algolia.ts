@@ -5,17 +5,31 @@ const ALGOLIA_ID = functions.config().algolia.app_id
 const ALGOLIA_ADMIN_KEY = functions.config().algolia.api_key
 const client = algoliasearch(ALGOLIA_ID, ALGOLIA_ADMIN_KEY);
 
-const onDataCreated = functions.firestore.document('testData/{testDataId}').onCreate((snap, context) => {
-  // Get the note document
-  const testData = snap.data()!
-  console.log(testData)
+const onSituationCreated = functions.firestore.document('situations/{situationId}').onCreate((snap, context) => {
+    // Get the note document
+    const situationData = snap.data()!
 
-  // Add an 'objectID' field which Algolia requires
-  testData.objectID = context.params.testDataId;
+    // Add an 'objectID' field which Algolia requires
+    situationData.objectID = context.params.situationId;
 
-  // Write to the algolia index
-  const index = client.initIndex("test")
-  return index.saveObject(testData)
+    // Write to the algolia index
+    const index = client.initIndex("situations")
+    return index.saveObject(situationData)
 })
 
-export { onDataCreated }
+const onTaskDataCreated = functions.firestore.document('tasks/{taskId}').onCreate((snap, context) => {
+  // Get the note document
+  const taskData = snap.data()!
+
+  // Add an 'objectID' field which Algolia requires
+  taskData.objectID = context.params.taskId;
+
+  // Write to the algolia index
+  const index = client.initIndex("tasks")
+  return index.saveObject(taskData)
+})
+
+export {
+  onSituationCreated,
+  onTaskDataCreated,
+}
