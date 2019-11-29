@@ -25,6 +25,7 @@ dependencies:
   cloud_firestore: ^0.12.10
   google_sign_in: ^4.0.11
   algolia: ^0.1.6+1
+  json_annotation: ^3.0.0
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
@@ -33,6 +34,8 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  build_runner: ^1.7.2
+  json_serializable: ^3.2.3
 
 
 # For information on the generic Dart part of this file, see the
@@ -48,7 +51,8 @@ flutter:
 
   # To add assets to your application, add an assets section, like this:
   assets:
-   - assets/images/sennin_kuchu_fuyuu_tsue.png
+  - secret.json
+  - assets/images/sennin_kuchu_fuyuu_tsue.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
