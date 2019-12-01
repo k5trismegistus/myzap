@@ -1,20 +1,7 @@
-import 'package:algolia/algolia.dart';
+import 'package:algolia/algolia.dart';import 'package:flutter_dotenv/flutter_dotenv.dart';
 
-class AlgoliaClient {
-  static AlgoliaClient _cachedInstance;
-  Algolia _client;
 
-  factory AlgoliaClient() {
-    if (_cachedInstance == null) {
-      Algolia _algolia = Algolia.init(
-        applicationId: String.fromEnvironment('ALGOLIA_ADMIN_KEY'),
-        apiKey: String.fromEnvironment('ALGOLIA_SEARCH_KEY'),
-      );
-      _cachedInstance = AlgoliaClient._internal();
-      _cachedInstance._client = _algolia;
-      return _cachedInstance;
-    }
-    return _cachedInstance;
-  }
-  AlgoliaClient._internal();
-}
+Algolia algoliaClient = Algolia.init(
+  applicationId: DotEnv().env['ALGOLIA_ADMIN_KEY'],
+  apiKey: DotEnv().env['ALGOLIA_SEARCH_KEY'],
+).instance;
