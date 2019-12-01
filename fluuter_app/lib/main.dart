@@ -1,11 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 import 'pages/splash.dart';
 import 'pages/login.dart';
 import 'pages/top.dart';
 import 'pages/addTaskPage.dart';
 
-void main() => runApp(MyzapApp());
+void main()  async {
+  await DotEnv().load('.env');
+  print(DotEnv().env);
+  runApp(MyzapApp());
+}
 
 class MyzapApp extends StatelessWidget {
   // This widget is the root of your application.

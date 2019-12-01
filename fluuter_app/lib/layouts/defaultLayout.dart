@@ -17,7 +17,6 @@ class DefaultLayout extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     FirebaseUser user = UserStore().getUser();
-    print(user.photoUrl);
 
     return Scaffold(
       appBar: AppBar(

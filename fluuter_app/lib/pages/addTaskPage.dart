@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
-import 'package:myzap/layouts/defaultLayout.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:myzap/layouts/defaultLayout.dart';
+import 'package:myzap/utils/algolia.dart';
 
 class FetchedSituation {
   int id;
@@ -36,13 +37,19 @@ class _AddTaskPageState extends State<AddTaskPage> {
   List<FetchedSituation> _selectedSituations = [];
 
   // In real implementation, fetch from DB or API
-  Future<List<FetchedSituation>> fetchSituations(String inputedText) {
+  Future<List<FetchedSituation>> fetchSituations(String inputedText) async {
     List<FetchedSituation> rst = [];
     situations.asMap().forEach((idx, label) {
       rst.add(new FetchedSituation(idx, label, false));
     });
 
     rst.add(new FetchedSituation(null, inputedText, true));
+
+    var _snap = await AlgoliaStore.getInstance().index('situations')
+                                .search(inputedText)
+                                .getObjects();
+    print(_snap);
+
 
     return new Future.delayed(new Duration(milliseconds: 50), (){
       return rst;
