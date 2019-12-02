@@ -5,7 +5,7 @@ import 'package:myzap/layouts/defaultLayout.dart';
 import 'package:myzap/utils/algolia.dart';
 
 class FetchedSituation {
-  int id;
+  String id;
   String label;
   bool nullPlaceholder; // if this value is true, this instance represent special value.
 
@@ -38,22 +38,12 @@ class _AddTaskPageState extends State<AddTaskPage> {
 
   // In real implementation, fetch from DB or API
   Future<List<FetchedSituation>> fetchSituations(String inputedText) async {
-    List<FetchedSituation> rst = [];
-    situations.asMap().forEach((idx, label) {
-      rst.add(new FetchedSituation(idx, label, false));
-    });
-
-    rst.add(new FetchedSituation(null, inputedText, true));
-
     var _snap = await AlgoliaStore.getInstance().index('situations')
                                 .search(inputedText)
                                 .getObjects();
-    print(_snap);
-
-
-    return new Future.delayed(new Duration(milliseconds: 50), (){
-      return rst;
-    });
+    return _snap.hits.map((h) {
+      return new FetchedSituation(h.objectID, h.data['label'], false);
+    }).toList();
   }
 
   List<Widget> situationChips() {
@@ -111,7 +101,6 @@ class _AddTaskPageState extends State<AddTaskPage> {
                 );
               },
               onSuggestionSelected: (suggestion) {
-                print(suggestion);
                 if (suggestion.nullPlaceholder) {
                   this.handleAddSituation(suggestion.label);
                   return;
