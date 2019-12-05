@@ -1,13 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:myzap/layouts/defaultLayout.dart';
+import 'package:myzap/pages/addTaskPage.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:myzap/utils/algolia.dart';
 
 // Below: for mock implementation
 
 class SelectableSituation {
+  String objectId;
   String label;
   bool selected = false;
 
-  SelectableSituation(this.label);
+  SelectableSituation(this.objectId, this.label);
 }
 
 List<String> situations = [
@@ -37,12 +41,22 @@ class _TopPageState extends State<TopPage> {
     this._loadChoices();
   }
 
-  void _loadChoices() {
-    List<SelectableSituation> rst = situations.map((situation) {
-      return new SelectableSituation(situation);
-    }).toList();
+  void _loadChoices() async {
+
+    List<SelectableSituation> rst = await this.fetchSituationSuggests();
 
     setState(() => this._choices = rst);
+  }
+
+  Future<List<SelectableSituation>> fetchSituationSuggests() async {
+    var snapshot = await Firestore.instance.collection('situations').limit(10).getDocuments();
+    var rst = snapshot.documents.map((doc) {
+      return new SelectableSituation(
+        doc['objectID'],
+        doc['label'],
+      );
+    }).toList();
+    return rst;
   }
 
   List<Widget> situationChips() {
@@ -101,6 +115,17 @@ class _TopPageState extends State<TopPage> {
                   )
                 )
               ]
+            ),
+            FlatButton(
+              onPressed: this._loadChoices,
+              color: Colors.blue,
+              child: Text(
+                'Reload',
+                style: TextStyle(
+                  color:Colors.white,
+                  fontSize: 20.0
+                ),
+              ),
             ),
             FlatButton(
               onPressed: this.showAction,

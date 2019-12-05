@@ -12,13 +12,6 @@ class FetchedSituation {
   FetchedSituation(this.id, this.label, this.nullPlaceholder);
 }
 
-List<String> situations = [
-  'Before go to bed, 30 minutes',
-  'During commuting',
-  'Friday night',
-];
-
-
 class AddTaskPage extends StatefulWidget {
   AddTaskPage({Key key, this.title}) : super(key: key);
 
