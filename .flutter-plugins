@@ -1,0 +1,6 @@
+cloud_firestore=/opt/flutter/.pub-cache/hosted/pub.dartlang.org/cloud_firestore-0.12.10+2/
+firebase_analytics=/opt/flutter/.pub-cache/hosted/pub.dartlang.org/firebase_analytics-5.0.6/
+firebase_auth=/opt/flutter/.pub-cache/hosted/pub.dartlang.org/firebase_auth-0.14.0+9/
+firebase_core=/opt/flutter/.pub-cache/hosted/pub.dartlang.org/firebase_core-0.4.2+1/
+flutter_keyboard_visibility=/opt/flutter/.pub-cache/hosted/pub.dartlang.org/flutter_keyboard_visibility-0.7.0/
+google_sign_in=/opt/flutter/.pub-cache/hosted/pub.dartlang.org/google_sign_in-4.0.14/

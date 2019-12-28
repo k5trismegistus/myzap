@@ -1,0 +1,4 @@
+enum EVENTS {
+  ADD_TASK,
+  APPROVE_TASK,
+}

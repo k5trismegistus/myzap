@@ -57,6 +57,8 @@ class _AddTaskPageState extends State<AddTaskPage> {
   }
 
   void handleAddTask() {
+
+    
     Firestore.instance.collection('tasks').document()
       .setData({
         'description': this._desriptionInputController.text,
