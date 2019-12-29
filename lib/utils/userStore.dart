@@ -18,7 +18,7 @@ class UserStore {
     return this._user;
   }
 
-  void unsetUser() async {
+  Future<void> unsetUser() async {
     await FirebaseAuth.instance.signOut();
     this._user = null;
   }

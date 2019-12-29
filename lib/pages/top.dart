@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:myzap/layouts/defaultLayout.dart';
-import 'package:myzap/pages/addTaskPage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:myzap/utils/algolia.dart';
 import 'package:myzap/models/myzap_task.dart';
@@ -53,6 +52,10 @@ class _TopPageState extends State<TopPage> {
   Future<MyzapTask> queryTask() async {
       var selectedSituationIds = this._choices.where((c) => c.selected).map((c) => c.objectId);
       var _snap = await AlgoliaStore.getInstance().index('tasks').search(selectedSituationIds.join(', ')).getObjects();
+
+      print('===================');
+      print(_snap);
+      print('===================');
 
       if (_snap.hits.length == 0) {
         return null;
