@@ -35,7 +35,9 @@ class _TopPageState extends State<TopPage> {
 
     List<SelectableSituation> rst = await this.fetchSituationSuggests();
 
-    setState(() => this._choices = rst);
+    if (this.mounted) {
+      setState(() => this._choices = rst);
+    }
   }
 
   Future<List<SelectableSituation>> fetchSituationSuggests() async {
@@ -52,10 +54,6 @@ class _TopPageState extends State<TopPage> {
   Future<MyzapTask> queryTask() async {
       var selectedSituationIds = this._choices.where((c) => c.selected).map((c) => c.objectId);
       var _snap = await AlgoliaStore.getInstance().index('tasks').search(selectedSituationIds.join(', ')).getObjects();
-
-      print('===================');
-      print(_snap);
-      print('===================');
 
       if (_snap.hits.length == 0) {
         return null;

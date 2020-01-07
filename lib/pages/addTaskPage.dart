@@ -35,9 +35,11 @@ class _AddTaskPageState extends State<AddTaskPage> {
     var _snap = await AlgoliaStore.getInstance().index('situations')
                                 .search(inputedText)
                                 .getObjects();
-    return _snap.hits.map((h) {
+    var lst = _snap.hits.map((h) {
       return new FetchedSituation(h.objectID, h.data['label'], false);
     }).toList();
+    lst.add(new FetchedSituation('', inputedText, true));
+    return lst;
   }
 
   List<Widget> situationChips() {
@@ -55,12 +57,27 @@ class _AddTaskPageState extends State<AddTaskPage> {
     newSituationRef.setData({
       'label': suggestion
     });
+
+    var sit = new FetchedSituation(newSituationRef.documentID, suggestion, false);
+    this.handleSelectSituation(sit);
+
     return newSituationRef.documentID;
+  }
+
+  void handleSelectSituation(suggestion) {
+    if (suggestion.nullPlaceholder) {
+      this.handleAddSituation(suggestion.label);
+      return;
+    }
+
+    setState(() {
+      this._situationInputController.text = '';
+      this._selectedSituations.add(suggestion);
+    });
   }
 
   Future<void> handleAddTask() async {
     Position position = await Geolocator().getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
-    print(position);
 
     Firestore.instance.collection('tasks').document()
       .setData({
@@ -72,6 +89,7 @@ class _AddTaskPageState extends State<AddTaskPage> {
           'long': position.longitude,
         }
       });
+    Navigator.pushReplacementNamed(context, '/top');
   }
 
   @override
@@ -105,17 +123,7 @@ class _AddTaskPageState extends State<AddTaskPage> {
                   title: Text(suggestion.label),
                 );
               },
-              onSuggestionSelected: (suggestion) {
-                if (suggestion.nullPlaceholder) {
-                  this.handleAddSituation(suggestion.label);
-                  return;
-                }
-
-                setState(() {
-                  this._situationInputController.text = '';
-                  this._selectedSituations.add(suggestion);
-                });
-              }
+              onSuggestionSelected: this.handleSelectSituation
             ),
             Expanded(
               child: Wrap(
