@@ -34,10 +34,28 @@
 @import flutter_keyboard_visibility;
 #endif
 
+#if __has_include(<geolocator/GeolocatorPlugin.h>)
+#import <geolocator/GeolocatorPlugin.h>
+#else
+@import geolocator;
+#endif
+
+#if __has_include(<google_api_availability/GoogleApiAvailabilityPlugin.h>)
+#import <google_api_availability/GoogleApiAvailabilityPlugin.h>
+#else
+@import google_api_availability;
+#endif
+
 #if __has_include(<google_sign_in/FLTGoogleSignInPlugin.h>)
 #import <google_sign_in/FLTGoogleSignInPlugin.h>
 #else
 @import google_sign_in;
+#endif
+
+#if __has_include(<location_permissions/LocationPermissionsPlugin.h>)
+#import <location_permissions/LocationPermissionsPlugin.h>
+#else
+@import location_permissions;
 #endif
 
 @implementation GeneratedPluginRegistrant
@@ -48,7 +66,10 @@
   [FLTFirebaseAuthPlugin registerWithRegistrar:[registry registrarForPlugin:@"FLTFirebaseAuthPlugin"]];
   [FLTFirebaseCorePlugin registerWithRegistrar:[registry registrarForPlugin:@"FLTFirebaseCorePlugin"]];
   [FLTKeyboardVisibilityPlugin registerWithRegistrar:[registry registrarForPlugin:@"FLTKeyboardVisibilityPlugin"]];
+  [GeolocatorPlugin registerWithRegistrar:[registry registrarForPlugin:@"GeolocatorPlugin"]];
+  [GoogleApiAvailabilityPlugin registerWithRegistrar:[registry registrarForPlugin:@"GoogleApiAvailabilityPlugin"]];
   [FLTGoogleSignInPlugin registerWithRegistrar:[registry registrarForPlugin:@"FLTGoogleSignInPlugin"]];
+  [LocationPermissionsPlugin registerWithRegistrar:[registry registrarForPlugin:@"LocationPermissionsPlugin"]];
 }
 
 @end

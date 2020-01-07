@@ -3,6 +3,7 @@ import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:myzap/layouts/defaultLayout.dart';
 import 'package:myzap/utils/algolia.dart';
+import 'package:geolocator/geolocator.dart';
 
 class FetchedSituation {
   String id;
@@ -50,22 +51,33 @@ class _AddTaskPageState extends State<AddTaskPage> {
 
   String handleAddSituation(suggestion) {
     var newSituationRef = Firestore.instance.collection('situations').document();
+
     newSituationRef.setData({
       'label': suggestion
     });
     return newSituationRef.documentID;
   }
 
-  void handleAddTask() {
+  Future<void> handleAddTask() async {
+    Position position = await Geolocator().getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+    print(position);
+
     Firestore.instance.collection('tasks').document()
       .setData({
         'description': this._desriptionInputController.text,
-        'situationIds': this._selectedSituations.map((s) => s.id).toList()
+        'situationIds': this._selectedSituations.map((s) => s.id).toList(),
+        'created_at': DateTime.now(),
+        'location': {
+          'lat': position.latitude,
+          'long': position.longitude,
+        }
       });
   }
 
   @override
   Widget build(BuildContext context) {
+    Geolocator().checkGeolocationPermissionStatus();
+
     return DefaultLayout(
       title: 'Add new task',
       page: Container(
