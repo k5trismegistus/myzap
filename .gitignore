@@ -3,3 +3,5 @@
 secret.json
 build/*
 google-services.json
+.dart_tool/*
+android/.gradle/*
