@@ -47,6 +47,11 @@ class _AddTaskPageState extends State<AddTaskPage> {
       return InputChip(
         label: Text(sit.label),
         labelStyle: TextStyle(color: Colors.black, fontSize: 16),
+        onDeleted: () {
+          setState(() {
+            this._selectedSituations.remove(sit);
+          });
+        },
       );
     }).toList();
   }
