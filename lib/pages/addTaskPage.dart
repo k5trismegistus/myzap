@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:myzap/layouts/defaultLayout.dart';
 import 'package:myzap/utils/algolia.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:myzap/widgets/waiting.dart';
 
 class FetchedSituation {
   String id;
@@ -29,6 +30,7 @@ class _AddTaskPageState extends State<AddTaskPage> {
   final TextEditingController _situationInputController = TextEditingController();
 
   List<FetchedSituation> _selectedSituations = [];
+  bool _loading = true;
 
   // In real implementation, fetch from DB or API
   Future<List<FetchedSituation>> fetchSituations(String inputedText) async {
@@ -82,6 +84,10 @@ class _AddTaskPageState extends State<AddTaskPage> {
   }
 
   Future<void> handleAddTask() async {
+    this.setState(() {
+      this._loading = true;
+    });
+
     Position position = await Geolocator().getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
 
     Firestore.instance.collection('tasks').document()
@@ -101,9 +107,7 @@ class _AddTaskPageState extends State<AddTaskPage> {
   Widget build(BuildContext context) {
     Geolocator().checkGeolocationPermissionStatus();
 
-    return DefaultLayout(
-      title: 'Add new task',
-      page: Container(
+    var body = Container(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: <Widget>[
@@ -145,7 +149,11 @@ class _AddTaskPageState extends State<AddTaskPage> {
             )
           ]
         )
-      )
+      );
+
+    return DefaultLayout(
+      title: 'Add new task',
+      page: this._loading ? WaitingWidget(bgPage: body) : body
     );
   }
 }
