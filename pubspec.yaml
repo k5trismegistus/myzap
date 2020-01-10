@@ -52,6 +52,10 @@ flutter:
   assets:
   - .env
   - assets/images/sennin_kuchu_fuyuu_tsue.png
+  - assets/images/duration_10min.png
+  - assets/images/duration_30min.png
+  - assets/images/duration_1hour.png
+  - assets/images/duration_1day.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
