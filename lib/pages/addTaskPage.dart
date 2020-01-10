@@ -5,6 +5,7 @@ import 'package:myzap/layouts/defaultLayout.dart';
 import 'package:myzap/utils/algolia.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:myzap/widgets/waiting.dart';
+import 'package:myzap/constants/durations.dart';
 
 class FetchedSituation {
   String id;
@@ -30,7 +31,7 @@ class _AddTaskPageState extends State<AddTaskPage> {
   final TextEditingController _situationInputController = TextEditingController();
 
   List<FetchedSituation> _selectedSituations = [];
-  bool _loading = true;
+  bool _loading = false;
 
   // In real implementation, fetch from DB or API
   Future<List<FetchedSituation>> fetchSituations(String inputedText) async {
@@ -83,6 +84,20 @@ class _AddTaskPageState extends State<AddTaskPage> {
     });
   }
 
+  List<Widget> durationChoice() {
+    return Durations.map((duration) {
+      return Container(
+        child: Center(
+          child: Image.asset(
+            duration.icon,
+            height: 180.0,
+            width: 180.0,
+          ),
+        )
+      );
+    }).toList();
+  }
+
   Future<void> handleAddTask() async {
     this.setState(() {
       this._loading = true;
@@ -133,6 +148,12 @@ class _AddTaskPageState extends State<AddTaskPage> {
                 );
               },
               onSuggestionSelected: this.handleSelectSituation
+            ),
+            SingleChildScrollView(
+              child: Row(
+                  children: this.durationChoice(),
+                ),
+                scrollDirection: Axis.horizontal
             ),
             Expanded(
               child: Wrap(
