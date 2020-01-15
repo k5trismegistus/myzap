@@ -6,7 +6,8 @@ class SelectableImage extends StatelessWidget {
     {
       this.height,
       this.width,
-      this.selected
+      this.selected,
+      this.onTap,
     }
   );
 
@@ -14,10 +15,11 @@ class SelectableImage extends StatelessWidget {
   final double height;
   final double width;
   final bool selected;
+  final Function onTap;
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return new Container(
       child: new Stack(
         children: <Widget>[
           Image.asset(
@@ -25,24 +27,30 @@ class SelectableImage extends StatelessWidget {
             height: this.height,
             width: this.width,
           ),
-          Opacity(
-            opacity: this.selected ? 0.5 : 0,
-            child: new Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                new Center(
-                  child: new SizedBox(
-                    height: this.height,
-                    width: this.height,
-                    child: const DecoratedBox(
-                      decoration: const BoxDecoration(
-                        color: Colors.blue
+          new Material(
+            type: MaterialType.transparency,
+            child: InkWell(
+              onTap: this.onTap,
+              child: Opacity(
+                opacity: this.selected ? 0.5 : 0,
+                child: new Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    new Center(
+                      child: new SizedBox(
+                        height: this.height,
+                        width: this.height,
+                        child: const DecoratedBox(
+                          decoration: const BoxDecoration(
+                            color: Colors.blue
+                          ),
+                        ),
                       ),
-                    ),
-                  ),
+                    )
+                  ]
                 )
-              ]
+              )
             )
           )
         ]

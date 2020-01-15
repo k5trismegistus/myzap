@@ -32,9 +32,9 @@ class _AddTaskPageState extends State<AddTaskPage> {
   final TextEditingController _situationInputController = TextEditingController();
 
   List<FetchedSituation> _selectedSituations = [];
+  Duration _selectedDuration = Durations.first;
   bool _loading = false;
 
-  // In real implementation, fetch from DB or API
   Future<List<FetchedSituation>> fetchSituations(String inputedText) async {
     var _snap = await AlgoliaStore.getInstance().index('situations')
                                 .search(inputedText)
@@ -87,13 +87,22 @@ class _AddTaskPageState extends State<AddTaskPage> {
 
   List<Widget> durationChoice() {
     return Durations.map((duration) {
-      return Container(
-        child: Center(
-          child: SelectableImage(
-            duration.icon,
-            height: 180.0,
-            width: 180.0,
-            selected: true,
+      return new Material(
+        type: MaterialType.button,
+        color: Colors.red.shade500,
+        child: Container(
+          child: Center(
+            child: SelectableImage(
+              duration.icon,
+              height: 180.0,
+              width: 180.0,
+              selected: (this._selectedDuration == duration),
+              onTap: () {
+                this.setState(() {
+                  this._selectedDuration = duration;
+                });
+              }
+            ),
           ),
         )
       );
