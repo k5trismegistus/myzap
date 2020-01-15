@@ -5,6 +5,7 @@ import 'package:myzap/layouts/defaultLayout.dart';
 import 'package:myzap/utils/algolia.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:myzap/widgets/waiting.dart';
+import 'package:myzap/widgets/selectable_image.dart';
 import 'package:myzap/constants/durations.dart';
 
 class FetchedSituation {
@@ -88,10 +89,11 @@ class _AddTaskPageState extends State<AddTaskPage> {
     return Durations.map((duration) {
       return Container(
         child: Center(
-          child: Image.asset(
+          child: SelectableImage(
             duration.icon,
             height: 180.0,
             width: 180.0,
+            selected: true,
           ),
         )
       );
