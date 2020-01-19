@@ -10,6 +10,8 @@
         android:name="io.flutter.app.FlutterApplication"
         android:label="myzap"
         android:icon="@mipmap/ic_launcher">
+        <meta-data android:name="com.google.android.geo.API_KEY"
+            android:value="INPUT YOUR TOKEN HERE"/>
         <activity
             android:name=".MainActivity"
             android:launchMode="singleTop"

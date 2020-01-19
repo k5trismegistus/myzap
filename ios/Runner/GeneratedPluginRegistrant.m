@@ -46,6 +46,12 @@
 @import google_api_availability;
 #endif
 
+#if __has_include(<google_maps_flutter/FLTGoogleMapsPlugin.h>)
+#import <google_maps_flutter/FLTGoogleMapsPlugin.h>
+#else
+@import google_maps_flutter;
+#endif
+
 #if __has_include(<google_sign_in/FLTGoogleSignInPlugin.h>)
 #import <google_sign_in/FLTGoogleSignInPlugin.h>
 #else
@@ -68,6 +74,7 @@
   [FLTKeyboardVisibilityPlugin registerWithRegistrar:[registry registrarForPlugin:@"FLTKeyboardVisibilityPlugin"]];
   [GeolocatorPlugin registerWithRegistrar:[registry registrarForPlugin:@"GeolocatorPlugin"]];
   [GoogleApiAvailabilityPlugin registerWithRegistrar:[registry registrarForPlugin:@"GoogleApiAvailabilityPlugin"]];
+  [FLTGoogleMapsPlugin registerWithRegistrar:[registry registrarForPlugin:@"FLTGoogleMapsPlugin"]];
   [FLTGoogleSignInPlugin registerWithRegistrar:[registry registrarForPlugin:@"FLTGoogleSignInPlugin"]];
   [LocationPermissionsPlugin registerWithRegistrar:[registry registrarForPlugin:@"LocationPermissionsPlugin"]];
 }
