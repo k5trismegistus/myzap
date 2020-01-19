@@ -34,8 +34,6 @@ class SelectableImage extends StatelessWidget {
               child: Opacity(
                 opacity: this.selected ? 0.5 : 0,
                 child: new Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
                     new Center(
                       child: new SizedBox(

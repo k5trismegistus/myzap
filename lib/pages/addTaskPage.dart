@@ -160,12 +160,6 @@ class _AddTaskPageState extends State<AddTaskPage> {
               },
               onSuggestionSelected: this.handleSelectSituation
             ),
-            SingleChildScrollView(
-              child: Row(
-                  children: this.durationChoice(),
-                ),
-                scrollDirection: Axis.horizontal
-            ),
             Expanded(
               child: Wrap(
                 alignment: WrapAlignment.start,
@@ -174,6 +168,12 @@ class _AddTaskPageState extends State<AddTaskPage> {
                 direction: Axis.horizontal,
                 children: this.situationChips()
               )
+            ),
+            SingleChildScrollView(
+              child: Row(
+                children: this.durationChoice(),
+              ),
+              scrollDirection: Axis.horizontal
             ),
             FlatButton(
               child: Text('Add'),
