@@ -29,6 +29,12 @@ class DefaultLayout extends StatelessWidget {
             Image.network(user.photoUrl),
             Text(user.displayName),
             FlatButton(
+              child: Text('Personal Place setting'),
+              onPressed: () {
+                Navigator.pushNamed(context, '/personalPlaces');
+              },
+            ),
+            FlatButton(
               child: Text('Log out'),
               onPressed: () async {
                 await UserStore().unsetUser();

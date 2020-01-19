@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:myzap/pages/personalPlacesPage.dart';
 
 import 'pages/splash.dart';
 import 'pages/login.dart';
@@ -26,7 +27,8 @@ class MyzapApp extends StatelessWidget {
         '/': (context) => Splash(),
         '/login': (context) => Login(),
         '/top': (context) => TopPage(title: 'What to do now?'),
-        '/addTask': (context) => AddTaskPage()
+        '/addTask': (context) => AddTaskPage(),
+        '/personalPlaces': (context) => PersonalPlacesPage(),
       }
     );
   }
