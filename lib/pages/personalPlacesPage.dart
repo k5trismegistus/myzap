@@ -24,11 +24,18 @@ class _PersonalPlacesPageState extends State<PersonalPlacesPage> {
 
   @override
   Widget build(BuildContext context) {
-    var body = Container();
+    var body = Container(
+      child: Column(),
+    );
 
     return DefaultLayout(
       title: 'Personal Places',
-      page: this._loading ? WaitingWidget(bgPage: body) : body
+      page: this._loading ? WaitingWidget(bgPage: body) : body,
+      floatingActionButton: FloatingActionButton(
+        onPressed: () => Navigator.pushNamed(context, '/addPersonalPlace'),
+        tooltip: 'Add new personal place',
+        child: Icon(Icons.add),
+      ), //
     );
   }
 }
