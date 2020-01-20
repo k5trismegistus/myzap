@@ -30,15 +30,17 @@ class _AddPersonalPlacePageState extends State<AddPersonalPlacePage> {
               suggestionsCallback: (pattern) async {
                 var resp = await this._places.searchByText(pattern);
                 return resp.results.map((rst) {
-                  return rst.name;
+                  return rst;
                 }).toList();
               },
-              itemBuilder: (context, suggestion) {
+              itemBuilder: (context, PlacesSearchResult suggestion) {
                 return ListTile(
-                  title: Text(suggestion),
+                  title: Text(suggestion.name),
                 );
               },
-              onSuggestionSelected: (suggestion) { }
+              onSuggestionSelected: (PlacesSearchResult suggestion) {
+                print(suggestion.geometry.toJson());
+              }
             ),
             SizedBox(
               height: 200,
