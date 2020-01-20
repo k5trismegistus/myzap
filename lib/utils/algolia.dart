@@ -1,4 +1,5 @@
-import 'package:algolia/algolia.dart';import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:algolia/algolia.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class AlgoliaStore {
   static final Algolia algolia = Algolia.init(

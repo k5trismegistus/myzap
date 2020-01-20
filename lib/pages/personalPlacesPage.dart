@@ -18,10 +18,6 @@ class PersonalPlacesPage extends StatefulWidget {
 class _PersonalPlacesPageState extends State<PersonalPlacesPage> {
   bool _loading = true;
 
-  // Future<List<FetchedSituation>> fetchPersonal() {
-
-  // }
-
   @override
   Widget build(BuildContext context) {
     var body = Container(
