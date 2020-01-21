@@ -15,7 +15,10 @@ class _AddPersonalPlacePageState extends State<AddPersonalPlacePage> {
   GoogleMapsPlaces _places = GoogleMapsPlaces(apiKey: DotEnv().env['GOOGLE_MAPS_API_KEY']);
   LatLng _location = LatLng(35.681236,139.767125);
 
+  TextEditingController _locTypeAheadController = TextEditingController();
   GoogleMapController _googleMapController;
+
+  Set<Marker> _markers = {};
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +30,7 @@ class _AddPersonalPlacePageState extends State<AddPersonalPlacePage> {
           children: <Widget>[
             TypeAheadField(
               textFieldConfiguration: TextFieldConfiguration(
-                controller: TextEditingController(),
+                controller: _locTypeAheadController,
               ),
               suggestionsCallback: (pattern) async {
                 var resp = await this._places.searchByText(pattern);
@@ -43,10 +46,18 @@ class _AddPersonalPlacePageState extends State<AddPersonalPlacePage> {
               onSuggestionSelected: (PlacesSearchResult suggestion) {
                 var loc = LatLng(suggestion.geometry.location.lat, suggestion.geometry.location.lng);
                 this.setState(() {
+                  this._locTypeAheadController.text = suggestion.name;
                   this._location = loc;
                   this._googleMapController.animateCamera(CameraUpdate.newCameraPosition(
                     CameraPosition(target: loc, zoom: 17.0)
                   ));
+                  this._markers = {Marker(
+                    markerId: MarkerId(suggestion.name),
+                    position: loc,
+                    infoWindow: InfoWindow(
+                      title: suggestion.name,
+                    ),
+                  )};
                 });
               }
             ),
@@ -61,6 +72,7 @@ class _AddPersonalPlacePageState extends State<AddPersonalPlacePage> {
                   zoom: 17.0,
                 ),
                 myLocationEnabled: true,
+                markers: this._markers,
               ),
             )
           ]
