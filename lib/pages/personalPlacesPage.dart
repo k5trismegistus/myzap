@@ -1,5 +1,9 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:myzap/layouts/defaultLayout.dart';
+import 'package:myzap/models/myzap_personal_place.dart';
 import 'package:myzap/widgets/waiting.dart';
 
 class FetchedPersonalPlaces {
@@ -17,11 +21,43 @@ class PersonalPlacesPage extends StatefulWidget {
 
 class _PersonalPlacesPageState extends State<PersonalPlacesPage> {
   bool _loading = true;
+  List<MyzapPersonalPlace> _personalPlaces = [];
+
+  Future<void> fetchPersonalPlaces() async {
+    var currentUser = await FirebaseAuth.instance.currentUser();
+    var userId = currentUser.uid;
+
+    var snapshot = Firestore.instance.collection('personalPlaces').where('userRef', isEqualTo: '/users/$userId').snapshots();
+    List<MyzapPersonalPlace> _fetched = this._personalPlaces;
+    snapshot.listen((data) {
+      data.documents.forEach((doc) {
+        var d = doc.data;
+        _fetched.add(MyzapPersonalPlace(
+          doc.documentID,
+          d['name'],
+          LatLng(
+            d['location']['lat'],
+            d['location']['lng'],
+          )
+        ));
+      });
+
+      this.setState(() {
+        this._loading = false;
+        this._personalPlaces = _fetched;
+      });
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
+    this.fetchPersonalPlaces();
+
     var body = Container(
-      child: Column(),
+      child: Column(
+        children: <Widget>[
+        ],
+      ),
     );
 
     return DefaultLayout(
