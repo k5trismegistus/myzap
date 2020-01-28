@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -15,10 +17,31 @@ class _AddPersonalPlacePageState extends State<AddPersonalPlacePage> {
   GoogleMapsPlaces _places = GoogleMapsPlaces(apiKey: DotEnv().env['GOOGLE_MAPS_API_KEY']);
   LatLng _location = LatLng(35.681236,139.767125);
 
+  TextEditingController _titleInputController = TextEditingController();
   TextEditingController _locTypeAheadController = TextEditingController();
   GoogleMapController _googleMapController;
 
   Set<Marker> _markers = {};
+
+  Future<String> handleAddPersonalPlace() async {
+    var currentUser = await FirebaseAuth.instance.currentUser();
+    var userId = currentUser.uid;
+
+    var name = _titleInputController.text;
+
+    var newSituationRef = Firestore.instance.collection('personalPlaces').document();
+
+    newSituationRef.setData({
+      'userRef': '/users/$userId',
+      'name': name,
+      'location': {
+        'lat': _location.latitude,
+        'lng': _location.longitude
+      }
+    });
+
+    return newSituationRef.documentID;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -28,6 +51,10 @@ class _AddPersonalPlacePageState extends State<AddPersonalPlacePage> {
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: <Widget>[
+            TextField(
+              controller: _titleInputController,
+              decoration: InputDecoration(hintText: 'Name'),
+            ),
             TypeAheadField(
               textFieldConfiguration: TextFieldConfiguration(
                 controller: _locTypeAheadController,
@@ -74,6 +101,10 @@ class _AddPersonalPlacePageState extends State<AddPersonalPlacePage> {
                 myLocationEnabled: true,
                 markers: this._markers,
               ),
+            ),
+            FlatButton(
+              child: Text('Register'),
+              onPressed: this.handleAddPersonalPlace,
             )
           ]
         )
