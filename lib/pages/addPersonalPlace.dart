@@ -23,7 +23,7 @@ class _AddPersonalPlacePageState extends State<AddPersonalPlacePage> {
 
   Set<Marker> _markers = {};
 
-  Future<String> handleAddPersonalPlace() async {
+  Future<void> handleAddPersonalPlace() async {
     var currentUser = await FirebaseAuth.instance.currentUser();
     var userId = currentUser.uid;
 
@@ -31,7 +31,7 @@ class _AddPersonalPlacePageState extends State<AddPersonalPlacePage> {
 
     var newSituationRef = Firestore.instance.collection('personalPlaces').document();
 
-    newSituationRef.setData({
+    await newSituationRef.setData({
       'userRef': '/users/$userId',
       'name': name,
       'location': {
@@ -40,7 +40,7 @@ class _AddPersonalPlacePageState extends State<AddPersonalPlacePage> {
       }
     });
 
-    return newSituationRef.documentID;
+    Navigator.pop(context);
   }
 
   @override
