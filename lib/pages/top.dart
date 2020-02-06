@@ -3,6 +3,8 @@ import 'package:myzap/layouts/defaultLayout.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:myzap/utils/algolia.dart';
 import 'package:myzap/models/myzap_task.dart';
+import 'package:myzap/constants/durations.dart';
+import 'package:myzap/widgets/duration_choice.dart';
 
 class SelectableSituation {
   String objectId;
@@ -75,7 +77,7 @@ class _TopPageState extends State<TopPage> {
       }).toList();
     }
 
-    void showAction() async {
+    void showAction(Duration duration) async {
       var task = await this.queryTask();
 
       if (task == null) {
@@ -152,17 +154,10 @@ class _TopPageState extends State<TopPage> {
                   ),
                 ),
               ),
-              FlatButton(
-                onPressed: this.showAction,
-                color: Colors.blue,
-                child: Text(
-                  'Tell me what to do',
-                  style: TextStyle(
-                    color:Colors.white,
-                    fontSize: 20.0
-                  ),
-                ),
-              )
+              DurationChoice(
+                selectable: false,
+                onSelected: this.showAction
+              ),
             ]
           ),
         ),
