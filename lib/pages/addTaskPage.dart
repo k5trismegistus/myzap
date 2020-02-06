@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:myzap/layouts/defaultLayout.dart';
 import 'package:myzap/utils/algolia.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:myzap/widgets/duration_choice.dart';
 import 'package:myzap/widgets/waiting.dart';
 import 'package:myzap/widgets/selectable_image.dart';
 import 'package:myzap/constants/durations.dart';
@@ -85,30 +86,6 @@ class _AddTaskPageState extends State<AddTaskPage> {
     });
   }
 
-  List<Widget> durationChoice() {
-    return Durations.map((duration) {
-      return new Material(
-        type: MaterialType.button,
-        color: Colors.red.shade500,
-        child: Container(
-          child: Center(
-            child: SelectableImage(
-              duration.icon,
-              height: 180.0,
-              width: 180.0,
-              selected: (this._selectedDuration == duration),
-              onTap: () {
-                this.setState(() {
-                  this._selectedDuration = duration;
-                });
-              }
-            ),
-          ),
-        )
-      );
-    }).toList();
-  }
-
   Future<void> handleAddTask() async {
     this.setState(() {
       this._loading = true;
@@ -170,11 +147,14 @@ class _AddTaskPageState extends State<AddTaskPage> {
                 children: this.situationChips()
               )
             ),
-            SingleChildScrollView(
-              child: Row(
-                children: this.durationChoice(),
-              ),
-              scrollDirection: Axis.horizontal
+            DurationChoice(
+              selectable: true,
+              selected: this._selectedDuration,
+              onSelected: (duration) {
+                this.setState(() {
+                  this._selectedDuration = duration;
+                });
+              },
             ),
             FlatButton(
               child: Text('Add'),
