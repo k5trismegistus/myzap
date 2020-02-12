@@ -23,6 +23,12 @@ class _PersonalPlacesPageState extends State<PersonalPlacesPage> {
   bool _loading = true;
   List<MyzapPersonalPlace> _personalPlaces = [];
 
+
+  void initState() {
+    super.initState();
+    this.fetchPersonalPlaces();
+  }
+
   Future<void> fetchPersonalPlaces() async {
     var currentUser = await FirebaseAuth.instance.currentUser();
     var userId = currentUser.uid;
@@ -49,14 +55,22 @@ class _PersonalPlacesPageState extends State<PersonalPlacesPage> {
     });
   }
 
+  List<Widget> buildPlacesList() {
+    return this._personalPlaces.map((p) {
+      return ListTile(
+        title: Text(p.name),
+        onTap: () {
+
+        },
+      );
+    }).toList();
+  }
+
   @override
   Widget build(BuildContext context) {
-    this.fetchPersonalPlaces();
-
     var body = Container(
-      child: Column(
-        children: <Widget>[
-        ],
+      child: ListView(
+        children: this.buildPlacesList()
       ),
     );
 
