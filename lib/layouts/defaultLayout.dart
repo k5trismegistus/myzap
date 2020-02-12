@@ -26,20 +26,37 @@ class DefaultLayout extends StatelessWidget {
       drawer: Drawer(
         child: ListView(
           children: <Widget>[
-            Image.network(user.photoUrl),
-            Text(user.displayName),
-            FlatButton(
-              child: Text('Personal Place setting'),
-              onPressed: () {
-                Navigator.pushNamed(context, '/personalPlaces');
-              },
+            DrawerHeader(
+              decoration: BoxDecoration(
+                color: Colors.blue,
+              ),
             ),
-            FlatButton(
-              child: Text('Log out'),
-              onPressed: () async {
-                await UserStore().unsetUser();
-                Navigator.pushReplacementNamed(context, '/login');
-              },
+            Padding(padding: EdgeInsets.all(8)),
+            ListTile(
+              title: Text(user.displayName),
+              leading: Image.network(user.photoUrl),
+            ),
+            Container(
+              child: Text('Settings'),
+              padding: EdgeInsets.only(top:16.0, left: 16.0),
+            ),
+            Card(
+              child: ListTile(
+                title: Text('Personal Place setting'),
+                onTap: () {
+                  Navigator.pushNamed(context, '/personalPlaces');
+                },
+              ),
+            ),
+            Card(
+              child: ListTile(
+                title: Text('Log out'),
+                onTap: () async {
+                  await UserStore().unsetUser();
+                  Navigator.pushReplacementNamed(context, '/login');
+                },
+              ),
+              color: Colors.red,
             )
           ],
         ),
