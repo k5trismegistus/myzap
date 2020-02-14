@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:myzap/pages/addPersonalPlace.dart';
+import 'package:myzap/pages/personalPlacePage.dart';
 import 'package:myzap/pages/personalPlacesPage.dart';
 
 import 'pages/splash.dart';
@@ -31,6 +32,7 @@ class MyzapApp extends StatelessWidget {
         '/addTask': (context) => AddTaskPage(),
         '/personalPlaces': (context) => PersonalPlacesPage(),
         '/addPersonalPlace': (context) => AddPersonalPlacePage(),
+        '/personalPlace': (context) => PersonalPlacePage(),
       }
     );
   }

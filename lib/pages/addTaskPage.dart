@@ -6,7 +6,6 @@ import 'package:myzap/utils/algolia.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:myzap/widgets/duration_choice.dart';
 import 'package:myzap/widgets/waiting.dart';
-import 'package:myzap/widgets/selectable_image.dart';
 import 'package:myzap/constants/durations.dart';
 
 class FetchedSituation {
