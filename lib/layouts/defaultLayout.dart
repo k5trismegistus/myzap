@@ -26,11 +26,11 @@ class DefaultLayout extends StatelessWidget {
       drawer: Drawer(
         child: ListView(
           children: <Widget>[
-            DrawerHeader(
-              decoration: BoxDecoration(
-                color: Colors.blue,
-              ),
-            ),
+            // DrawerHeader(
+            //   decoration: BoxDecoration(
+            //     color: Colors.blue,
+            //   ),
+            // ),
             Padding(padding: EdgeInsets.all(8)),
             ListTile(
               title: Text(user.displayName),

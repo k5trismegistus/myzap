@@ -37,7 +37,10 @@ class PersonalPlacePage extends StatelessWidget {
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: <Widget>[
-            Text(args.title),
+            Container(
+              child: Text(args.title),
+              padding: EdgeInsets.all(16),
+            ),
             SizedBox(
               height: 200,
               child: GoogleMap(
@@ -48,9 +51,11 @@ class PersonalPlacePage extends StatelessWidget {
                   target: args.latLng,
                   zoom: 17.0,
                 ),
-                myLocationEnabled: true,
                 markers: this._markers,
               ),
+            ),
+            FlatButton(
+              child: Text('Remove this place')
             )
           ]
         )

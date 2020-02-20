@@ -23,6 +23,10 @@ class _AddPersonalPlacePageState extends State<AddPersonalPlacePage> {
 
   Set<Marker> _markers = {};
 
+  bool registerable() {
+    return this._location != null && this._titleInputController.text.length > 0;
+  }
+
   Future<void> handleAddPersonalPlace() async {
     var currentUser = await FirebaseAuth.instance.currentUser();
     var userId = currentUser.uid;
@@ -40,7 +44,7 @@ class _AddPersonalPlacePageState extends State<AddPersonalPlacePage> {
       }
     });
 
-    Navigator.pop(context);
+    Navigator.pushReplacementNamed(context, '/personalPlaces');
   }
 
   @override
@@ -104,7 +108,7 @@ class _AddPersonalPlacePageState extends State<AddPersonalPlacePage> {
             ),
             FlatButton(
               child: Text('Register'),
-              onPressed: this.handleAddPersonalPlace,
+              onPressed: this.registerable() ? this.handleAddPersonalPlace: null,
             )
           ]
         )
