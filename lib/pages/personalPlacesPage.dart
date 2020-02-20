@@ -4,15 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:myzap/layouts/defaultLayout.dart';
 import 'package:myzap/models/myzap_personal_place.dart';
-import 'package:myzap/pages/personalPlacePage.dart';
 import 'package:myzap/widgets/waiting.dart';
-
-class FetchedPersonalPlaces {
-  final String id;
-  final String title;
-
-  FetchedPersonalPlaces(this.id, this.title);
-}
 
 class PersonalPlacesPage extends StatefulWidget {
 
@@ -61,10 +53,7 @@ class _PersonalPlacesPageState extends State<PersonalPlacesPage> {
       return ListTile(
         title: Text(p.name),
         onTap: () {
-          Navigator.pushNamed(context, '/personalPlace', arguments: PersonalPlacePageArgument(
-            p.name,
-            p.location
-          ));
+          Navigator.pushNamed(context, '/personalPlace', arguments: p);
         },
       );
     }).toList();
