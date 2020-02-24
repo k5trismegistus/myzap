@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -90,6 +91,9 @@ class _AddTaskPageState extends State<AddTaskPage> {
       this._loading = true;
     });
 
+    var currentUser = await FirebaseAuth.instance.currentUser();
+    var userId = currentUser.uid;
+
     Position position = await Geolocator().getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
 
     Firestore.instance.collection('tasks').document()
@@ -101,7 +105,8 @@ class _AddTaskPageState extends State<AddTaskPage> {
         'location': {
           'lat': position.latitude,
           'long': position.longitude,
-        }
+        },
+        'userRef': '/users/$userId',
       });
     Navigator.pushReplacementNamed(context, '/top');
   }
