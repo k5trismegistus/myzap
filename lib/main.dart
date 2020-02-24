@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:myzap/pages/addPersonalPlace.dart';
-import 'package:myzap/pages/personalPlacePage.dart';
-import 'package:myzap/pages/personalPlacesPage.dart';
+import 'package:myzap/pages/add_personal_place.dart';
+import 'package:myzap/pages/personal_place_page.dart';
+import 'package:myzap/pages/personal_places_page.dart';
 
-import 'pages/splash.dart';
-import 'pages/login.dart';
-import 'pages/top.dart';
-import 'pages/addTaskPage.dart';
+import 'pages/splash_page.dart';
+import 'pages/login_page.dart';
+import 'pages/top_page.dart';
+import 'pages/add_task_page.dart';
 
 void main()  async {
   await DotEnv().load('.env');
