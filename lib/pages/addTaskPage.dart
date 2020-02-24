@@ -99,7 +99,7 @@ class _AddTaskPageState extends State<AddTaskPage> {
     Firestore.instance.collection('tasks').document()
       .setData({
         'description': this._desriptionInputController.text,
-        'situationIds': this._selectedSituations.map((s) => s.id).toList(),
+        'situationIds': this._selectedSituations.map((s) => '/situations/${s.id}').toList(),
         'createdAt': DateTime.now(),
         'duraion': this._selectedDuration.durationSeconds,
         'location': {

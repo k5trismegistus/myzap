@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:myzap/layouts/defaultLayout.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:myzap/utils/algolia.dart';
@@ -62,6 +64,7 @@ class _TopPageState extends State<TopPage> {
       }
 
       var selected = (_snap.hits..shuffle()).first;
+      print(selected.objectID);
       return new MyzapTask(
         id: selected.objectID,
         description: selected.data['description'],
@@ -82,6 +85,11 @@ class _TopPageState extends State<TopPage> {
 
     void showAction(Duration duration) async {
       var task = await this.queryTask();
+      var position = await Geolocator().getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+      var currentLocation = LatLng(
+        position.latitude,
+        position.longitude,
+      );
 
       if (task == null) {
         showDialog(
@@ -93,7 +101,7 @@ class _TopPageState extends State<TopPage> {
               actions: <Widget>[
                 FlatButton(
                   child: Text("OK"),
-                  onPressed: () => Navigator.pop(context),
+                  onPressed: ()  => Navigator.pop(context),
                 ),
               ],
             );
@@ -115,7 +123,10 @@ class _TopPageState extends State<TopPage> {
               ),
               FlatButton(
                 child: Text("OK"),
-                onPressed: () => Navigator.pop(context),
+                onPressed: () async {
+                  await task.makeDecision('accept', currentLocation);
+                  Navigator.pop(context);
+                },
               ),
             ],
           );
