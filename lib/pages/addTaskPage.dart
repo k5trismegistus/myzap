@@ -100,12 +100,14 @@ class _AddTaskPageState extends State<AddTaskPage> {
       .setData({
         'description': this._desriptionInputController.text,
         'situationIds': this._selectedSituations.map((s) => s.id).toList(),
-        'created_at': DateTime.now(),
+        'createdAt': DateTime.now(),
         'duraion': this._selectedDuration.durationSeconds,
         'location': {
           'lat': position.latitude,
           'long': position.longitude,
         },
+        'completedAt': null,
+        'declination': [],
         'userRef': '/users/$userId',
       });
     Navigator.pushReplacementNamed(context, '/top');

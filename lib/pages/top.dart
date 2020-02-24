@@ -62,7 +62,10 @@ class _TopPageState extends State<TopPage> {
       }
 
       var selected = (_snap.hits..shuffle()).first;
-      return new MyzapTask(selected.objectID, selected.data['description'], []);
+      return new MyzapTask(
+        id: selected.objectID,
+        description: selected.data['description'],
+      );
     }
 
     List<Widget> situationChips() {

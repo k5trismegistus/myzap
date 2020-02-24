@@ -32,9 +32,9 @@ class _PersonalPlacesPageState extends State<PersonalPlacesPage> {
       data.documents.forEach((doc) {
         var d = doc.data;
         _fetched.add(MyzapPersonalPlace(
-          doc.documentID,
-          d['name'],
-          LatLng(
+          id: doc.documentID,
+          name: d['name'],
+          location: LatLng(
             d['location']['lat'],
             d['location']['lng'],
           )

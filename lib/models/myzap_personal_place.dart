@@ -5,5 +5,9 @@ class MyzapPersonalPlace {
   final String name;
   final LatLng location;
 
-  MyzapPersonalPlace(this.id, this.name, this.location);
+  MyzapPersonalPlace({
+    this.id,
+    this.name,
+    this.location
+  });
 }
