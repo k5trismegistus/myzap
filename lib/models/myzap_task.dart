@@ -44,5 +44,15 @@ class MyzapTask {
         });
       return true;
     }
+
+    if (type == 'decline') {
+      await Firestore.instance
+        .collection("tasks")
+        .document(this.id)
+        .updateData({
+          'declination': [...(this.declinations != null ? this.declinations : []).map((d) => d.toMap()), decision.toMap()],
+        });
+      return true;
+    }
   }
 }

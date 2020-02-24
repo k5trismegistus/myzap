@@ -35,8 +35,8 @@ class _PersonalPlacesPageState extends State<PersonalPlacesPage> {
           id: doc.documentID,
           name: d['name'],
           location: LatLng(
-            d['location']['lat'],
-            d['location']['lng'],
+            d['location']['latitude'],
+            d['location']['longitude'],
           )
         ));
       });

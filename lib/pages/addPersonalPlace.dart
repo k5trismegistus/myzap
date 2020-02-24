@@ -39,8 +39,8 @@ class _AddPersonalPlacePageState extends State<AddPersonalPlacePage> {
       'userRef': '/users/$userId',
       'name': name,
       'location': {
-        'lat': _location.latitude,
-        'lng': _location.longitude
+        'lattitude': _location.latitude,
+        'longitude': _location.longitude
       }
     });
 

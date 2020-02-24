@@ -15,6 +15,21 @@ class MyzapDecision implements MyzapModel {
     this.type,
   });
 
+  static MyzapDecision fromMap(Map<String, dynamic> map) {
+    if (map == null) {
+      return null;
+    }
+
+    return MyzapDecision(
+      madeAt: map['madeAt'],
+      madeLocation: LatLng(
+        map['madeLocation']['latitude'],
+        map['madeLocation']['longitude'],
+      ),
+      type: map['type']
+    );
+  }
+
   @override
   Map<String, dynamic> toMap() {
     return {

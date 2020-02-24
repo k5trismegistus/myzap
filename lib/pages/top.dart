@@ -3,6 +3,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:myzap/layouts/defaultLayout.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:myzap/models/myzap_decision.dart';
 import 'package:myzap/utils/algolia.dart';
 import 'package:myzap/models/myzap_task.dart';
 import 'package:myzap/constants/durations.dart';
@@ -64,10 +65,17 @@ class _TopPageState extends State<TopPage> {
       }
 
       var selected = (_snap.hits..shuffle()).first;
-      print(selected.objectID);
+      var queriedTask = Firestore.instance.collection('tasks').document(selected.objectID);
+
+      print(queriedTask);
+
       return new MyzapTask(
         id: selected.objectID,
         description: selected.data['description'],
+        completion: MyzapDecision.fromMap(selected?.data['completion']),
+        declinations: (selected.data['declination'] != null) ?
+          selected.data['declination'].map<MyzapDecision>((d) => MyzapDecision.fromMap(d)).toList() :
+          [],
       );
     }
 
@@ -119,7 +127,10 @@ class _TopPageState extends State<TopPage> {
             actions: <Widget>[
               FlatButton(
                 child: Text("No"),
-                onPressed: () => Navigator.pop(context),
+                onPressed: () async {
+                  await task.makeDecision('decline', currentLocation);
+                  Navigator.pop(context);
+                },
               ),
               FlatButton(
                 child: Text("OK"),

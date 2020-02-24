@@ -103,10 +103,10 @@ class _AddTaskPageState extends State<AddTaskPage> {
         'createdAt': DateTime.now(),
         'duraion': this._selectedDuration.durationSeconds,
         'location': {
-          'lat': position.latitude,
-          'long': position.longitude,
+          'latitude': position.latitude,
+          'longitude': position.longitude,
         },
-        'completedAt': null,
+        'completion': null,
         'declination': [],
         'userRef': '/users/$userId',
       });
