@@ -65,16 +65,15 @@ class _TopPageState extends State<TopPage> {
       }
 
       var selected = (_snap.hits..shuffle()).first;
-      var queriedTask = Firestore.instance.collection('tasks').document(selected.objectID);
-
-      print(queriedTask);
+      var queriedTask = await Firestore.instance.collection('tasks').document(selected.objectID).get();
+      var taskData = queriedTask.data;
 
       return new MyzapTask(
-        id: selected.objectID,
-        description: selected.data['description'],
-        completion: MyzapDecision.fromMap(selected?.data['completion']),
-        declinations: (selected.data['declination'] != null) ?
-          selected.data['declination'].map<MyzapDecision>((d) => MyzapDecision.fromMap(d)).toList() :
+        id: queriedTask.documentID,
+        description: taskData['description'],
+        completion: MyzapDecision.fromMap(taskData['completion']),
+        declinations: (taskData['declination'] != null) ?
+          taskData['declination'].map<MyzapDecision>((d) => MyzapDecision.fromMap(Map<String,dynamic>.from(d))).toList() :
           [],
       );
     }

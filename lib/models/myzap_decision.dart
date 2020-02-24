@@ -21,7 +21,7 @@ class MyzapDecision implements MyzapModel {
     }
 
     return MyzapDecision(
-      madeAt: map['madeAt'],
+      madeAt: map['madeAt'].toDate(),
       madeLocation: LatLng(
         map['madeLocation']['latitude'],
         map['madeLocation']['longitude'],
