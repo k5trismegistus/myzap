@@ -36,7 +36,7 @@ class _SplashState extends State {
       return;
     }
 
-    UserStore().setUser(user);
+    await UserStore().setUser(user);
     Navigator.pushReplacementNamed(context, '/top');
   }
 }

@@ -42,7 +42,7 @@ class _LoginState extends State {
     );
 
     final FirebaseUser user = (await _auth.signInWithCredential(credential)).user;
-    this._userStore.setUser(user);
+    await this._userStore.setUser(user);
 
     Navigator.pushReplacementNamed(context, '/top');
   }

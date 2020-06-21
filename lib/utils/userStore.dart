@@ -1,4 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:myzap/models/myzap_user.dart';
 
 class UserStore {
   FirebaseUser _user;
@@ -10,7 +11,8 @@ class UserStore {
 
   UserStore._internal();
 
-  void setUser(FirebaseUser user) {
+  Future<void> setUser(FirebaseUser user) async {
+    await MyzapUser.initOrCreate(user.uid);
     this._user = user;
   }
 
