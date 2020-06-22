@@ -11,8 +11,6 @@ class Login extends StatefulWidget {
 
 class _LoginState extends State {
   final GoogleSignIn _googleSignIn = GoogleSignIn();
-  final FirebaseAuth _auth = FirebaseAuth.instance;
-  final UserStore _userStore = UserStore();
 
   @override
   Widget build(BuildContext context) {
@@ -41,8 +39,7 @@ class _LoginState extends State {
       idToken: googleAuth.idToken,
     );
 
-    final FirebaseUser user = (await _auth.signInWithCredential(credential)).user;
-    await this._userStore.setUser(user);
+    await UserStore().login(credential);
 
     Navigator.pushReplacementNamed(context, '/top');
   }

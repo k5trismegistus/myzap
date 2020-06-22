@@ -10,12 +10,16 @@ class Splash extends StatefulWidget {
 }
 
 class _SplashState extends State {
-  final FirebaseAuth _auth = FirebaseAuth.instance;
 
   @override
-  void initState() {
+  void initState() async {
     super.initState();
-    _detectLogin();
+
+    if (await UserStore().detectLogin() != null) {
+      Navigator.pushReplacementNamed(context, '/top');
+      return;
+    };
+    Navigator.pushReplacementNamed(context, '/login');
   }
 
   @override
@@ -27,16 +31,5 @@ class _SplashState extends State {
         )
       ),
     );
-  }
-
-  _detectLogin() async {
-    FirebaseUser user = await _auth.currentUser();
-    if (user == null) {
-      Navigator.pushReplacementNamed(context, '/login');
-      return;
-    }
-
-    await UserStore().setUser(user);
-    Navigator.pushReplacementNamed(context, '/top');
   }
 }
