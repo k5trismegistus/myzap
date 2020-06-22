@@ -1,11 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:myzap/layouts/defaultLayout.dart';
 import "package:google_maps_webservice/places.dart";
 import 'package:flutter_typeahead/flutter_typeahead.dart';
+import 'package:myzap/utils/userStore.dart';
 
 class AddPersonalPlacePage extends StatefulWidget {
   @override
@@ -28,8 +28,8 @@ class _AddPersonalPlacePageState extends State<AddPersonalPlacePage> {
   }
 
   Future<void> handleAddPersonalPlace() async {
-    var currentUser = await FirebaseAuth.instance.currentUser();
-    var userId = currentUser.uid;
+    var currentUser = UserStore().getUser();
+    var userId = currentUser.uid();
 
     var name = _titleInputController.text;
 
