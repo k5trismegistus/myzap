@@ -1,5 +1,5 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:myzap/models/myzap_user.dart';
 import 'package:myzap/utils/userStore.dart';
 
 class DefaultLayout extends StatelessWidget {
@@ -16,7 +16,7 @@ class DefaultLayout extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    FirebaseUser user = UserStore().getUser();
+    MyzapUser user = UserStore().getUser();
 
     return Scaffold(
       appBar: AppBar(
@@ -33,8 +33,8 @@ class DefaultLayout extends StatelessWidget {
             // ),
             Padding(padding: EdgeInsets.all(8)),
             ListTile(
-              title: Text(user.displayName),
-              leading: Image.network(user.photoUrl),
+              title: Text(user.displayName()),
+              leading: Image.network(user.photoUrl()),
             ),
             Container(
               child: Text('Settings'),
@@ -52,7 +52,7 @@ class DefaultLayout extends StatelessWidget {
               child: ListTile(
                 title: Text('Log out'),
                 onTap: () async {
-                  await UserStore().unsetUser();
+                  await UserStore().logout();
                   Navigator.pushReplacementNamed(context, '/login');
                 },
               ),
