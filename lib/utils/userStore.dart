@@ -26,8 +26,13 @@ class UserStore {
 
   Future<MyzapUser> login(AuthCredential credential) async {
     FirebaseUser firebaseUser = (await _auth.signInWithCredential(credential)).user;
-    await this._setUser(firebaseUser);
-    return this._user;
+    if (firebaseUser != null) {
+      await this._setUser(firebaseUser);
+      print(this._user.toMap());
+      return this._user;
+    }
+    // TODO: handle error
+    print('login failed');
   }
 
   Future<void> _setUser(FirebaseUser firebaseUser) async {

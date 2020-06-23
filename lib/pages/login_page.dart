@@ -39,8 +39,13 @@ class _LoginState extends State {
       idToken: googleAuth.idToken,
     );
 
-    await UserStore().login(credential);
+    var user = await UserStore().login(credential);
+    if (user != null) {
+      Navigator.pushReplacementNamed(context, '/top');
+      return;
+    }
 
-    Navigator.pushReplacementNamed(context, '/top');
+    // TODO: Handle error
+    return;
   }
 }

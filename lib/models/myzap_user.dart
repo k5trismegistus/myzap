@@ -4,7 +4,7 @@ import 'package:myzap/models/myzap_situation.dart';
 import 'package:myzap/models/myzap_task.dart';
 import 'myzap_model.dart';
 
-class MyzapUser {
+class MyzapUser extends MyzapModel {
   final String id;
   final List<MyzapTask> tasks;
   final List<MyzapSituation> situations;
@@ -17,12 +17,23 @@ class MyzapUser {
     this.firebaseUser,
   });
 
+  String uid() {
+    return this.firebaseUser.uid;
+  }
+
   String photoUrl() {
     return this.firebaseUser.photoUrl;
   }
 
   String displayName() {
     return this.firebaseUser.displayName;
+  }
+
+  Map<String, dynamic> toMap() {
+    return {
+      'id': this.id,
+      'displayName': this.displayName(),
+    };
   }
 
   static Future<MyzapUser> initOrCreate(FirebaseUser firebaseUser) async {
@@ -53,6 +64,6 @@ class MyzapUser {
     print('already exist');
 
     // TODO: Build tasks and situations from firestore record
-    return new MyzapUser(id: uid, tasks: [], situations: []);
+    return new MyzapUser(id: uid, tasks: [], situations: [], firebaseUser: firebaseUser);
   }
 }
