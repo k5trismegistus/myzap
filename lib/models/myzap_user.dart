@@ -15,7 +15,8 @@ class MyzapUser extends MyzapModel {
     this.tasks,
     this.situations,
     this.firebaseUser,
-  });
+    DocumentReference documentReference
+  }) : super(documentReference: documentReference);
 
   String uid() {
     return this.firebaseUser.uid;
@@ -38,32 +39,42 @@ class MyzapUser extends MyzapModel {
 
   static Future<MyzapUser> initOrCreate(FirebaseUser firebaseUser) async {
     var uid = firebaseUser.uid;
-    var record = await Firestore.instance.collection("users")
-      .where('uid', isEqualTo: uid)
-      .getDocuments();
+    var query = Firestore.instance.collection("users").where('uid', isEqualTo: uid);
+    var records = (await query.getDocuments()).documents;
 
-    var recordLength = record.documents.length;
+    var recordLength = records.length;
 
     // If user record didn't exist on firestore
     if (recordLength == 0) {
-      Firestore.instance.collection("users")
-        .document()
-        .setData({
-          'uid': uid,
-          'tasks': [],
-          'situations': [],
-        });
+      var documentReference = Firestore.instance
+        .collection("users")
+        .document();
 
-      return new MyzapUser(
+      await documentReference.setData({
+        'uid': uid,
+        'tasks': [],
+        'situations': [],
+      });
+
+      var myzapUser = new MyzapUser(
         id: uid,
         tasks: [],
         situations: [],
         firebaseUser: firebaseUser,
+        documentReference: documentReference,
       );
+      return myzapUser;
     }
-    print('already exist');
+
+    var documentReference = records.first.reference;
 
     // TODO: Build tasks and situations from firestore record
-    return new MyzapUser(id: uid, tasks: [], situations: [], firebaseUser: firebaseUser);
+    return new MyzapUser(
+      id: uid,
+      tasks: [],
+      situations: [],
+      firebaseUser: firebaseUser,
+      documentReference: documentReference,
+    );
   }
 }

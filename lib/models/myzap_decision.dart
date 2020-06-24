@@ -1,8 +1,9 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 import 'myzap_model.dart';
 
-class MyzapDecision implements MyzapModel {
+class MyzapDecision extends MyzapModel {
   final DateTime madeAt;
   final LatLng madeLocation;
   // Dart does not have union type.
@@ -13,7 +14,8 @@ class MyzapDecision implements MyzapModel {
     this.madeAt,
     this.madeLocation,
     this.type,
-  });
+    DocumentReference documentReference
+  }) : super(documentReference: documentReference);
 
   static MyzapDecision fromMap(Map<String, dynamic> map) {
     if (map == null) {
