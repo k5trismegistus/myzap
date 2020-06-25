@@ -2,19 +2,26 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:myzap/layouts/defaultLayout.dart';
+import 'package:myzap/models/myzap_situation.dart';
+import 'package:myzap/models/myzap_task.dart';
 import 'package:myzap/utils/algolia.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:myzap/utils/userStore.dart';
 import 'package:myzap/widgets/duration_choice.dart';
 import 'package:myzap/widgets/waiting.dart';
 import 'package:myzap/constants/durations.dart';
 
 class FetchedSituation {
-  String id;
-  String label;
+  MyzapSituation instance;
   bool nullPlaceholder; // if this value is true, this instance represent special value.
 
-  FetchedSituation(this.id, this.label, this.nullPlaceholder);
+  FetchedSituation(this.instance, this.nullPlaceholder);
+  factory FetchedSituation.build({String id, String label, bool nullPlaceholder}) {
+    var instance = new MyzapSituation(id: id, label: label);
+    return FetchedSituation(instance, nullPlaceholder);
+  }
 }
 
 class AddTaskPage extends StatefulWidget {
@@ -41,16 +48,16 @@ class _AddTaskPageState extends State<AddTaskPage> {
                                 .search(inputedText)
                                 .getObjects();
     var lst = _snap.hits.map((h) {
-      return new FetchedSituation(h.objectID, h.data['label'], false);
+      return new FetchedSituation.build(id: h.objectID, label: h.data['label'], nullPlaceholder: false);
     }).toList();
-    lst.add(new FetchedSituation('', inputedText, true));
+    lst.add(new FetchedSituation.build(id: '', label: '', nullPlaceholder: true));
     return lst;
   }
 
   List<Widget> situationChips() {
     return this._selectedSituations.map((sit) {
       return InputChip(
-        label: Text(sit.label),
+        label: Text(sit.instance.label),
         labelStyle: TextStyle(color: Colors.black, fontSize: 16),
         onDeleted: () {
           setState(() {
@@ -61,14 +68,14 @@ class _AddTaskPageState extends State<AddTaskPage> {
     }).toList();
   }
 
-  String handleAddSituation(suggestion) {
+  Future<String> handleAddSituation(suggestion) async {
     var newSituationRef = Firestore.instance.collection('situations').document();
 
-    newSituationRef.setData({
+    await newSituationRef.setData({
       'label': suggestion
     });
 
-    var sit = new FetchedSituation(newSituationRef.documentID, suggestion, false);
+    var sit = new FetchedSituation.build(id: newSituationRef.documentID, label: suggestion, nullPlaceholder: false);
     this.handleSelectSituation(sit);
 
     return newSituationRef.documentID;
@@ -76,7 +83,7 @@ class _AddTaskPageState extends State<AddTaskPage> {
 
   void handleSelectSituation(suggestion) {
     if (suggestion.nullPlaceholder) {
-      this.handleAddSituation(suggestion.label);
+      this.handleAddSituation(suggestion.instance.label);
       return;
     }
 
@@ -91,25 +98,22 @@ class _AddTaskPageState extends State<AddTaskPage> {
       this._loading = true;
     });
 
-    var currentUser = await FirebaseAuth.instance.currentUser();
-    var userId = currentUser.uid;
+    var currentUser = UserStore().getUser();
 
     Position position = await Geolocator().getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
 
-    Firestore.instance.collection('tasks').document()
-      .setData({
-        'description': this._desriptionInputController.text,
-        'situationIds': this._selectedSituations.map((s) => '/situations/${s.id}').toList(),
-        'createdAt': DateTime.now(),
-        'duraion': this._selectedDuration.durationSeconds,
-        'location': {
-          'latitude': position.latitude,
-          'longitude': position.longitude,
-        },
-        'completion': null,
-        'declination': [],
-        'userRef': '/users/$userId',
-      });
+    var params = MyzapTaskParams(
+      description: this._desriptionInputController.text,
+      duration: this._selectedDuration.durationSeconds,
+      location: LatLng(
+        position.latitude,
+        position.longitude,
+      ),
+      situations: this._selectedSituations.map((s) => s.instance).toList(),
+    );
+
+    await MyzapTask.create(currentUser, params);
+
     Navigator.pushReplacementNamed(context, '/top');
   }
 
@@ -135,11 +139,11 @@ class _AddTaskPageState extends State<AddTaskPage> {
               itemBuilder: (context, suggestion) {
                 if (suggestion.nullPlaceholder) {
                   return ListTile(
-                    title: Text("Add new situation \"${suggestion.label}\"")
+                    title: Text("Add new situation \"${this._situationInputController.text}\"")
                   );
                 }
                 return ListTile(
-                  title: Text(suggestion.label),
+                  title: Text(suggestion.instance.label),
                 );
               },
               onSuggestionSelected: this.handleSelectSituation
