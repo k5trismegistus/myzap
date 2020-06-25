@@ -12,14 +12,20 @@ class Splash extends StatefulWidget {
 class _SplashState extends State {
 
   @override
-  void initState() async {
+  void initState() {
     super.initState();
 
-    if (await UserStore().detectLogin() != null) {
+    this.transition();
+  }
+
+  Future<void> transition() async {
+    var login = await UserStore().detectLogin();
+
+    if (login != null) {
       Navigator.pushReplacementNamed(context, '/top');
-      return;
-    };
-    Navigator.pushReplacementNamed(context, '/login');
+    } else {
+      Navigator.pushReplacementNamed(context, '/login');
+    }
   }
 
   @override

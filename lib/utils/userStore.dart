@@ -20,7 +20,7 @@ class UserStore {
       return null;
     }
 
-    this._setUser(firebaseUser);
+    await this._setUser(firebaseUser);
     return this._user;
   }
 
