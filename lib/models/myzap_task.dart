@@ -47,7 +47,7 @@ class MyzapTask extends MyzapModel {
     // TODO: Create record in user record
 
     await user.documentReference.updateData({
-      'tasks': {
+      'tasks': FieldValue.arrayUnion([{
         'description': params.description,
         'situations': params.situations.map((s) => s.toMap()).toList(),
         'createdAt': createdAt,
@@ -58,7 +58,7 @@ class MyzapTask extends MyzapModel {
         },
         'completion': null,
         'declination': [],
-      }
+      }])
     });
 
     // TODO: build instance from firebase record
