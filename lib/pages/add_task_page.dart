@@ -39,7 +39,7 @@ class _AddTaskPageState extends State<AddTaskPage> {
   final TextEditingController _situationInputController = TextEditingController();
 
   List<FetchedSituation> _selectedSituations = [];
-  Duration _selectedDuration = Durations.first;
+  Duration _selectedDuration = durations.first;
   bool _loading = false;
 
   Future<List<FetchedSituation>> fetchSituations(String inputedText) async {

@@ -12,7 +12,7 @@ class DurationChoice extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var dcs = Durations.map((duration) {
+    var dcs = durations.map((duration) {
       return new Material(
         type: MaterialType.button,
         color: Colors.red.shade500,

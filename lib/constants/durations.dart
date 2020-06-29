@@ -5,7 +5,7 @@ class Duration {
   Duration(this.durationSeconds, this.icon);
 }
 
-final List Durations = [
+final List durations = [
   Duration(60 * 10, 'assets/images/duration_10min.png'),
   Duration(60 * 30, 'assets/images/duration_30min.png'),
   Duration(60 * 60, 'assets/images/duration_1hour.png'),
