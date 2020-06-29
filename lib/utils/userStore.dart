@@ -1,5 +1,4 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:myzap/models/myzap_task.dart';
 import 'package:myzap/models/myzap_user.dart';
 
 class UserStore {
@@ -33,6 +32,7 @@ class UserStore {
     }
     // TODO: handle error
     print('login failed');
+    return null;
   }
 
   Future<void> _setUser(FirebaseUser firebaseUser) async {

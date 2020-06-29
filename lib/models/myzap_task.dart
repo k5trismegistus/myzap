@@ -4,7 +4,6 @@ import 'package:myzap/models/myzap_model.dart';
 import 'package:myzap/models/myzap_situation.dart';
 import 'package:myzap/models/myzap_user.dart';
 import 'myzap_decision.dart';
-import 'myzap_decision.dart';
 
 class MyzapTaskParams {
   final String description;
@@ -76,6 +75,18 @@ class MyzapTask extends MyzapModel {
       'completion': this.completion?.toMap(),
       'declination': this.declinations.map((d) => d.toMap()).toList(),
     };
+  }
+
+  factory MyzapTask.fromMap(data, path) {
+    return new MyzapTask(
+      description: data['description'],
+      duration: data['duration'],
+      location: LatLng(data['location']['latitude'], data['location']['longitude']),
+      situations: [],
+      declinations: [],
+      completion: null,
+      documentReference: Firestore.instance.document(path),
+    );
   }
 
   Future<bool> makeDecision(String type, LatLng decidedLocation) async {
