@@ -45,21 +45,35 @@ class MyzapTask extends MyzapModel {
     DocumentReference documentReference
   }) : super(documentReference: documentReference);
 
-  static Future<MyzapTask> create(MyzapUser user, MyzapTaskParams params) async {
+  static MyzapTask initialize(MyzapTaskParams params) {
     var createdAt = DateTime.now();
 
     var task = new MyzapTask(
       description: params.description,
-        situations: params.situations,
-        createdAt: createdAt,
-        duration: params.duration,
-        location: new LatLng(params.location.latitude, params.location.longitude),
-        completion: null,
-        declinations: [],
+      situations: params.situations,
+      createdAt: createdAt,
+      duration: params.duration,
+      location: new LatLng(params.location.latitude, params.location.longitude),
+      completion: null,
+      declinations: [],
     );
-    await user.addTask(task);
 
     return task;
+  }
+
+  Future<bool> save(DocumentReference docRef) async {
+    if (this.documentReference != null) {
+      await this.documentReference.updateData(this.toMap());
+      return true;
+    }
+
+    if (docRef != null) {
+      await docRef.updateData(this.toMap());
+      return true;
+    }
+
+    // TODO: handle error
+    return false;
   }
 
   Map<String, dynamic> toMap() {
@@ -77,7 +91,7 @@ class MyzapTask extends MyzapModel {
     };
   }
 
-  factory MyzapTask.fromMap(data, path) {
+  factory MyzapTask.fromMap(Map<dynamic, dynamic> data, DocumentReference ref) {
     return new MyzapTask(
       description: data['description'],
       duration: data['duration'],
@@ -85,7 +99,7 @@ class MyzapTask extends MyzapModel {
       situations: [],
       declinations: [],
       completion: null,
-      documentReference: Firestore.instance.document(path),
+      documentReference: ref,
     );
   }
 
@@ -108,6 +122,7 @@ class MyzapTask extends MyzapModel {
       return true;
     }
 
+    // TODO: Use subcollection
     if (type == 'decline') {
       await Firestore.instance
         .collection("tasks")
@@ -117,5 +132,8 @@ class MyzapTask extends MyzapModel {
         });
       return true;
     }
+
+    // TODO: handle error
+    return false;
   }
 }
