@@ -79,9 +79,8 @@ class MyzapUser extends MyzapModel {
   }
 
   Future<MyzapTask> addTask(MyzapTask task) async {
-    await this.documentReference.updateData({
-      'tasks': FieldValue.arrayUnion([task.toMap()])
-    });
+    var taskDocRef =  this.documentReference.collection('tasks').document();
+    await taskDocRef.setData(task.toMap());
     return task;
   }
 }
