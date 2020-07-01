@@ -2,7 +2,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:myzap/models/myzap_model.dart';
 import 'package:myzap/models/myzap_situation.dart';
-import 'package:myzap/models/myzap_user.dart';
 import 'myzap_decision.dart';
 
 class MyzapTaskParams {
@@ -63,12 +62,12 @@ class MyzapTask extends MyzapModel {
 
   Future<bool> save(DocumentReference docRef) async {
     if (this.documentReference != null) {
-      await this.documentReference.updateData(this.toMap());
+      await this.documentReference.updateData(this.toFireStoreMap());
       return true;
     }
 
     if (docRef != null) {
-      await docRef.updateData(this.toMap());
+      await docRef.setData(this.toFireStoreMap());
       return true;
     }
 
@@ -88,6 +87,19 @@ class MyzapTask extends MyzapModel {
       },
       'completion': this.completion?.toMap(),
       'declination': this.declinations.map((d) => d.toMap()).toList(),
+    };
+  }
+
+  Map<String, dynamic> toFireStoreMap() {
+    return {
+      'description': this.description,
+      'createdAt': createdAt,
+      'duraion': this.duration,
+      'location': {
+        'latitude': this.location.latitude,
+        'longitude': this.location.longitude,
+      },
+      'completion': this.completion?.toMap(),
     };
   }
 
@@ -113,9 +125,7 @@ class MyzapTask extends MyzapModel {
     );
 
     if (type == 'accept') {
-      await Firestore.instance
-        .collection("tasks")
-        .document(this.id)
+      await this.documentReference
         .updateData({
           'completion': decision.toMap(),
         });
@@ -124,12 +134,14 @@ class MyzapTask extends MyzapModel {
 
     // TODO: Use subcollection
     if (type == 'decline') {
-      await Firestore.instance
-        .collection("tasks")
-        .document(this.id)
-        .updateData({
-          'declination': [...(this.declinations != null ? this.declinations : []).map((d) => d.toMap()), decision.toMap()],
-        });
+      var declineDocref = this.documentReference
+        .collection('declinations')
+        .document();
+
+
+        // .updateData({
+        //   'declination': [...(this.declinations != null ? this.declinations : []).map((d) => d.toMap()), decision.toMap()],
+        // });
       return true;
     }
 

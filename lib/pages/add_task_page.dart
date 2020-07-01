@@ -111,7 +111,7 @@ class _AddTaskPageState extends State<AddTaskPage> {
       situations: this._selectedSituations.map((s) => s.instance).toList(),
     );
 
-    await MyzapTask.create(currentUser, params);
+    await currentUser.addTask(params);
 
     Navigator.pushReplacementNamed(context, '/top');
   }
