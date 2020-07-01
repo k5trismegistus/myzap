@@ -8,7 +8,9 @@ import 'package:myzap/models/myzap_personal_place.dart';
 
 class PersonalPlacePage extends StatelessWidget {
   MyzapPersonalPlace _place;
-  GoogleMapsPlaces _places = GoogleMapsPlaces(apiKey: DotEnv().env['GOOGLE_MAPS_API_KEY']);
+  // ignore: unused_field
+  GoogleMapsPlaces s = GoogleMapsPlaces(apiKey: DotEnv().env['GOOGLE_MAPS_API_KEY']);
+  // ignore: unused_field
   GoogleMapController _googleMapController;
 
   Set<Marker> _markers = {};
