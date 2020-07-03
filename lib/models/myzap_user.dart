@@ -1,7 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:myzap/models/myzap_situation.dart';
 import 'package:myzap/models/myzap_task.dart';
+import 'myzap_decision.dart';
 import 'myzap_model.dart';
 
 class MyzapUser extends MyzapModel {
@@ -70,11 +72,10 @@ class MyzapUser extends MyzapModel {
     }).toList();
 
     var situationsRecords = await documentReference.collection('situations').getDocuments();
-    var situations = tasksRecords.documents.map((situationRecord) {
+    var situations = situationsRecords.documents.map((situationRecord) {
       return MyzapSituation.fromMap(situationRecord.data, situationRecord.reference);
     }).toList();
-s
-    // TODO: Build tasks and situations from firestore record
+
     return new MyzapUser(
       id: uid,
       tasks: tasks,
@@ -84,8 +85,22 @@ s
     );
   }
 
-  Future<MyzapTask> addTask(MyzapTaskParams taskParams) async {
-    var task = MyzapTask.initialize(taskParams);
+  Future<MyzapTask> addTask({
+    String description,
+    int duration,
+    LatLng location,
+    List<MyzapSituation> situations,
+    List<MyzapDecision> declination,
+    MyzapDecision completion,
+  }) async {
+    var task = MyzapTask.initialize(
+      description: description,
+      duration: duration,
+      location: location,
+      situations: situations,
+      declination: declination,
+      completion: completion,
+    );
     var newTaskDocRef = this.documentReference.collection('tasks').document();
 
     task.save(newTaskDocRef);

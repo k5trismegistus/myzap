@@ -101,7 +101,7 @@ class _AddTaskPageState extends State<AddTaskPage> {
 
     Position position = await Geolocator().getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
 
-    var params = MyzapTaskParams(
+    await currentUser.addTask(
       description: this._desriptionInputController.text,
       duration: this._selectedDuration.durationSeconds,
       location: LatLng(
@@ -110,8 +110,6 @@ class _AddTaskPageState extends State<AddTaskPage> {
       ),
       situations: this._selectedSituations.map((s) => s.instance).toList(),
     );
-
-    await currentUser.addTask(params);
 
     Navigator.pushReplacementNamed(context, '/top');
   }

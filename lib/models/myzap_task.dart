@@ -4,24 +4,6 @@ import 'package:myzap/models/myzap_model.dart';
 import 'package:myzap/models/myzap_situation.dart';
 import 'myzap_decision.dart';
 
-class MyzapTaskParams {
-  final String description;
-  final int duration;
-  final LatLng location;
-  final List<MyzapSituation> situations;
-  final List<MyzapDecision> declination;
-  final MyzapDecision completion;
-
-  MyzapTaskParams({
-    this.description,
-    this.duration,
-    this.location,
-    this.situations,
-    this.declination,
-    this.completion
-  });
-}
-
 class MyzapTask extends MyzapModel {
   final String id;
   final String description;
@@ -44,15 +26,22 @@ class MyzapTask extends MyzapModel {
     DocumentReference documentReference
   }) : super(documentReference: documentReference);
 
-  static MyzapTask initialize(MyzapTaskParams params) {
+  static MyzapTask initialize({
+    String description,
+    int duration,
+    LatLng location,
+    List<MyzapSituation> situations,
+    List<MyzapDecision> declination,
+    MyzapDecision completion,
+  }) {
     var createdAt = DateTime.now();
 
     var task = new MyzapTask(
-      description: params.description,
-      situations: params.situations,
+      description: description,
+      situations: situations,
       createdAt: createdAt,
-      duration: params.duration,
-      location: new LatLng(params.location.latitude, params.location.longitude),
+      duration: duration,
+      location: location,
       completion: null,
       declinations: [],
     );
