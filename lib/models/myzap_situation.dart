@@ -17,4 +17,12 @@ class MyzapSituation extends MyzapModel{
       'label': this.label,
     };
   }
+
+  static MyzapSituation fromMap(data, ref) {
+    return new MyzapSituation(
+      id: data['id'],
+      label: data['label'],
+      documentReference: ref,
+    );
+  }
 }

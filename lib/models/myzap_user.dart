@@ -64,23 +64,21 @@ class MyzapUser extends MyzapModel {
 
     var documentReference = records.first.reference;
 
-     List<MyzapTask> tasks = records.first.data['tasks'] != null ?
-      records.first.data['tasks'].asMap().entries.map<MyzapTask>((entry) {
-        var idx = entry.key;
-        var data = entry.value;
-        var ref = documentReference.collection('tasks').document(idx.toString());
-        return MyzapTask.fromMap(data, ref);
-      }).toList() : [];
+    var tasksRecords = await documentReference.collection('tasks').getDocuments();
+    var tasks = tasksRecords.documents.map((taskRecord) {
+      return MyzapTask.fromMap(taskRecord.data, taskRecord.reference);
+    }).toList();
 
-    if (tasks == null) {
-      tasks = [];
-    }
-
+    var situationsRecords = await documentReference.collection('situations').getDocuments();
+    var situations = tasksRecords.documents.map((situationRecord) {
+      return MyzapSituation.fromMap(situationRecord.data, situationRecord.reference);
+    }).toList();
+s
     // TODO: Build tasks and situations from firestore record
     return new MyzapUser(
       id: uid,
       tasks: tasks,
-      situations: [],
+      situations: situations,
       firebaseUser: firebaseUser,
       documentReference: documentReference,
     );
