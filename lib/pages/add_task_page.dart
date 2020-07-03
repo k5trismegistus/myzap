@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:myzap/layouts/defaultLayout.dart';
 import 'package:myzap/models/myzap_situation.dart';
@@ -17,10 +16,6 @@ class FetchedSituation {
   bool nullPlaceholder; // if this value is true, this instance represent special value.
 
   FetchedSituation(this.instance, this.nullPlaceholder);
-  factory FetchedSituation.build({String id, String label, bool nullPlaceholder}) {
-    var instance = new MyzapSituation(id: id, label: label);
-    return FetchedSituation(instance, nullPlaceholder);
-  }
 }
 
 class AddTaskPage extends StatefulWidget {
@@ -42,14 +37,11 @@ class _AddTaskPageState extends State<AddTaskPage> {
   Duration _selectedDuration = durations.first;
   bool _loading = false;
 
-  Future<List<FetchedSituation>> fetchSituations(String inputedText) async {
-    var _snap = await AlgoliaStore.getInstance().index('situations')
-                                .search(inputedText)
-                                .getObjects();
-    var lst = _snap.hits.map((h) {
-      return new FetchedSituation.build(id: h.objectID, label: h.data['label'], nullPlaceholder: false);
-    }).toList();
-    lst.add(new FetchedSituation.build(id: '', label: '', nullPlaceholder: true));
+  List<FetchedSituation> fetchSituations(String inputedText) {
+    var currentUser = UserStore().getUser();
+
+    var lst = currentUser.situations.map((sit) => FetchedSituation(sit, false)).toList();
+    lst.add(new FetchedSituation(null, true));
     return lst;
   }
 
@@ -67,22 +59,21 @@ class _AddTaskPageState extends State<AddTaskPage> {
     }).toList();
   }
 
-  Future<String> handleAddSituation(suggestion) async {
-    var newSituationRef = Firestore.instance.collection('situations').document();
+  Future<FetchedSituation> handleAddSituation(String label) async {
+    var currentUser = UserStore().getUser();
+    var situation = await currentUser.addSituation(label: label);
 
-    await newSituationRef.setData({
-      'label': suggestion
-    });
-
-    var sit = new FetchedSituation.build(id: newSituationRef.documentID, label: suggestion, nullPlaceholder: false);
-    this.handleSelectSituation(sit);
-
-    return newSituationRef.documentID;
+    var sit = new FetchedSituation(situation, false);
+    return sit;
   }
 
-  void handleSelectSituation(suggestion) {
+  Future<void> handleSelectSituation(FetchedSituation suggestion) async {
     if (suggestion.nullPlaceholder) {
-      this.handleAddSituation(suggestion.instance.label);
+      var newSit = await this.handleAddSituation(this._situationInputController.text);
+      setState(() {
+        this._situationInputController.text = '';
+        this._selectedSituations.add(newSit);
+      });
       return;
     }
 
@@ -131,16 +122,16 @@ class _AddTaskPageState extends State<AddTaskPage> {
                 controller: this._situationInputController,
               ),
               suggestionsCallback: (pattern) async {
-                return await fetchSituations(pattern);
+                return fetchSituations(pattern);
               },
               itemBuilder: (context, suggestion) {
-                if (suggestion.nullPlaceholder) {
+                if (!suggestion.nullPlaceholder) {
                   return ListTile(
-                    title: Text("Add new situation \"${this._situationInputController.text}\"")
+                    title: Text(suggestion.instance.label),
                   );
                 }
                 return ListTile(
-                  title: Text(suggestion.instance.label),
+                  title: Text("Add new situation \"${this._situationInputController.text}\"")
                 );
               },
               onSuggestionSelected: this.handleSelectSituation

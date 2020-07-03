@@ -103,7 +103,19 @@ class MyzapUser extends MyzapModel {
     );
     var newTaskDocRef = this.documentReference.collection('tasks').document();
 
-    task.save(newTaskDocRef);
+    await task.save(newTaskDocRef);
     return task;
+  }
+
+  Future<MyzapSituation> addSituation({
+    String label,
+  }) async {
+    var situation = MyzapSituation.initialize(
+      label: label,
+    );
+    var newSituationDocRef = this.documentReference.collection('situations').document();
+
+    await situation.save(newSituationDocRef);
+    return situation;
   }
 }
