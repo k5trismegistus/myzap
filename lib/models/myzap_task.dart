@@ -5,7 +5,6 @@ import 'package:myzap/models/myzap_situation.dart';
 import 'myzap_decision.dart';
 
 class MyzapTask extends MyzapModel {
-  final String id;
   final String description;
   final int duration;
   final DateTime createdAt;
@@ -15,7 +14,6 @@ class MyzapTask extends MyzapModel {
   final List<MyzapSituation> situations;
 
   MyzapTask({
-    this.id,
     this.description,
     this.situations,
     this.duration,
