@@ -4,17 +4,18 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:myzap/layouts/defaultLayout.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:myzap/models/myzap_decision.dart';
+import 'package:myzap/models/myzap_situation.dart';
 import 'package:myzap/utils/algolia.dart';
 import 'package:myzap/models/myzap_task.dart';
 import 'package:myzap/constants/durations.dart';
+import 'package:myzap/utils/userStore.dart';
 import 'package:myzap/widgets/duration_choice.dart';
 
 class SelectableSituation {
-  String objectId;
-  String label;
+  MyzapSituation instance;
   bool selected = false;
 
-  SelectableSituation(this.objectId, this.label);
+  SelectableSituation(this.instance);
 }
 
 class TopPage extends StatefulWidget {
@@ -37,27 +38,23 @@ class _TopPageState extends State<TopPage> {
   }
 
   void _loadChoices() async {
-
-    List<SelectableSituation> rst = await this.fetchSituationSuggests();
+    List<SelectableSituation> rst = this.fetchSituationSuggests();
 
     if (this.mounted) {
       setState(() => this._choices = rst);
     }
   }
 
-  Future<List<SelectableSituation>> fetchSituationSuggests() async {
-    var snapshot = await Firestore.instance.collection('situations').limit(10).getDocuments();
-    var rst = snapshot.documents.map((doc) {
-      return new SelectableSituation(
-        doc.documentID,
-        doc['label'],
-      );
+  List<SelectableSituation> fetchSituationSuggests() {
+    var currentUser = UserStore().getUser();
+    var rst = currentUser.situations.map((sit) {
+      return new SelectableSituation(sit);
     }).toList();
     return rst;
   }
 
   Future<MyzapTask> queryTask() async {
-      var selectedSituationIds = this._choices.where((c) => c.selected).map((c) => c.objectId);
+      var selectedSituationIds = this._choices.where((c) => c.selected).map((c) => c.instance.documentReference.documentID);
       var _snap = await AlgoliaStore.getInstance().index('tasks').search(selectedSituationIds.join(', ')).getObjects();
 
       if (_snap.hits.length == 0) {
@@ -69,7 +66,6 @@ class _TopPageState extends State<TopPage> {
       var taskData = queriedTask.data;
 
       return new MyzapTask(
-        id: queriedTask.documentID,
         description: taskData['description'],
         completion: MyzapDecision.fromMap(taskData['completion']),
         declinations: (taskData['declination'] != null) ?
@@ -81,7 +77,7 @@ class _TopPageState extends State<TopPage> {
     List<Widget> situationChips() {
       return this._choices.map((choice) {
         return InputChip(
-          label: Text(choice.label),
+          label: Text(choice.instance.label),
           labelStyle: TextStyle(color: choice.selected ? Colors.black : Colors.grey, fontSize: 16),
           onPressed: () {
             setState(()  => choice.selected = !choice.selected);
