@@ -125,6 +125,8 @@ class MyzapTask extends MyzapModel {
         .collection('declinations')
         .document();
 
+      decision.save(declineDocref);
+
 
         // .updateData({
         //   'declination': [...(this.declinations != null ? this.declinations : []).map((d) => d.toMap()), decision.toMap()],
