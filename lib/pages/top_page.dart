@@ -54,138 +54,152 @@ class _TopPageState extends State<TopPage> {
   }
 
   Future<MyzapTask> queryTask() async {
-      var selectedSituationIds = this._choices.where((c) => c.selected).map((c) => c.instance.documentReference.documentID);
-      var _snap = await AlgoliaStore.getInstance().index('tasks').search(selectedSituationIds.join(', ')).getObjects();
+    var currentUser = UserStore().getUser();
 
-      if (_snap.hits.length == 0) {
-        return null;
-      }
+    var userFilter = 'userId:${currentUser.documentReference.documentID}';
+    var selectedSituationIdFilter = this._choices
+      .where((c) => c.selected)
+      .map((c) => c.instance.documentReference.documentID)
+      .toList()
+      .join(' OR ');
 
-      var selected = (_snap.hits..shuffle()).first;
-      var queriedTask = await Firestore.instance.collection('tasks').document(selected.objectID).get();
-      var taskData = queriedTask.data;
+    var _snap = await AlgoliaStore
+      .getInstance()
+      .index('tasks')
+      .setFacetFilter(userFilter)
+      .setFacetFilter(selectedSituationIdFilter)
+      .search('')
+      .getObjects();
 
-      return new MyzapTask(
-        description: taskData['description'],
-        completion: MyzapDecision.fromMap(taskData['completion']),
-        declinations: (taskData['declination'] != null) ?
-          taskData['declination'].map<MyzapDecision>((d) => MyzapDecision.fromMap(Map<String,dynamic>.from(d))).toList() :
-          [],
-      );
+    if (_snap.hits.length == 0) {
+      return null;
     }
 
-    List<Widget> situationChips() {
-      return this._choices.map((choice) {
-        return InputChip(
-          label: Text(choice.instance.label),
-          labelStyle: TextStyle(color: choice.selected ? Colors.black : Colors.grey, fontSize: 16),
-          onPressed: () {
-            setState(()  => choice.selected = !choice.selected);
-          }
-        );
-      }).toList();
-    }
+    var selected = (_snap.hits..shuffle()).first;
+    var queriedTask = await Firestore.instance.collection('users').document(currentUser.documentReference.documentID).collection('tasks').document(selected.objectID).get();
+    var taskData = queriedTask.data;
 
-    void showAction(Duration duration) async {
-      var task = await this.queryTask();
-      var position = await Geolocator().getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
-      var currentLocation = LatLng(
-        position.latitude,
-        position.longitude,
+    return new MyzapTask(
+      description: taskData['description'],
+      completion: MyzapDecision.fromMap(taskData['completion']),
+      declinations: (taskData['declination'] != null) ?
+        taskData['declination'].map<MyzapDecision>((d) => MyzapDecision.fromMap(Map<String,dynamic>.from(d))).toList() :
+        [],
+    );
+  }
+
+  List<Widget> situationChips() {
+    return this._choices.map((choice) {
+      return InputChip(
+        label: Text(choice.instance.label),
+        labelStyle: TextStyle(color: choice.selected ? Colors.black : Colors.grey, fontSize: 16),
+        onPressed: () {
+          setState(()  => choice.selected = !choice.selected);
+        }
       );
+    }).toList();
+  }
 
-      if (task == null) {
-        showDialog(
-          context: context,
-          builder: (_) {
-            return AlertDialog(
-              title: Text("Guru has no answer..."),
-              content: Text(''),
-              actions: <Widget>[
-                FlatButton(
-                  child: Text("OK"),
-                  onPressed: ()  => Navigator.pop(context),
-                ),
-              ],
-            );
-          },
-        );
-        return;
-      }
+  void showAction(Duration duration) async {
+    var task = await this.queryTask();
+    var position = await Geolocator().getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+    var currentLocation = LatLng(
+      position.latitude,
+      position.longitude,
+    );
 
+    if (task == null) {
       showDialog(
         context: context,
         builder: (_) {
           return AlertDialog(
-            title: Text("Guru's oracle..."),
-            content: Text(task.description),
+            title: Text("Guru has no answer..."),
+            content: Text(''),
             actions: <Widget>[
               FlatButton(
-                child: Text("No"),
-                onPressed: () async {
-                  await task.makeDecision('decline', currentLocation);
-                  Navigator.pop(context);
-                },
-              ),
-              FlatButton(
                 child: Text("OK"),
-                onPressed: () async {
-                  await task.makeDecision('accept', currentLocation);
-                  Navigator.pop(context);
-                },
+                onPressed: ()  => Navigator.pop(context),
               ),
             ],
           );
         },
       );
+      return;
     }
 
-    @override
-    Widget build(BuildContext context) {
-      return DefaultLayout(
-        title: widget.title,
-        page: Container(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Expanded(
-                    child: Wrap(
-                      alignment: WrapAlignment.start,
-                      spacing: 8.0,
-                      runSpacing: 0.0,
-                      direction: Axis.horizontal,
-                      children: this.situationChips()
-                    )
+    showDialog(
+      context: context,
+      builder: (_) {
+        return AlertDialog(
+          title: Text("Guru's oracle..."),
+          content: Text(task.description),
+          actions: <Widget>[
+            FlatButton(
+              child: Text("No"),
+              onPressed: () async {
+                await task.makeDecision('decline', currentLocation);
+                Navigator.pop(context);
+              },
+            ),
+            FlatButton(
+              child: Text("OK"),
+              onPressed: () async {
+                await task.makeDecision('accept', currentLocation);
+                Navigator.pop(context);
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return DefaultLayout(
+      title: widget.title,
+      page: Container(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Expanded(
+                  child: Wrap(
+                    alignment: WrapAlignment.start,
+                    spacing: 8.0,
+                    runSpacing: 0.0,
+                    direction: Axis.horizontal,
+                    children: this.situationChips()
                   )
-                ]
-              ),
-              FlatButton(
-                onPressed: this._loadChoices,
-                color: Colors.blue,
-                child: Text(
-                  'Reload',
-                  style: TextStyle(
-                    color:Colors.white,
-                    fontSize: 20.0
-                  ),
+                )
+              ]
+            ),
+            FlatButton(
+              onPressed: this._loadChoices,
+              color: Colors.blue,
+              child: Text(
+                'Reload',
+                style: TextStyle(
+                  color:Colors.white,
+                  fontSize: 20.0
                 ),
               ),
-              DurationChoice(
-                selectable: false,
-                onSelected: this.showAction
-              ),
-            ]
-          ),
+            ),
+            DurationChoice(
+              selectable: false,
+              onSelected: this.showAction
+            ),
+          ]
         ),
-        floatingActionButton: FloatingActionButton(
-          onPressed: () => Navigator.pushNamed(context, '/addTask'),
-          tooltip: 'Add new Task!',
-          child: Icon(Icons.add),
-        ), //
-      );
-    }
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () => Navigator.pushNamed(context, '/addTask'),
+        tooltip: 'Add new Task!',
+        child: Icon(Icons.add),
+      ), //
+    );
   }
+}

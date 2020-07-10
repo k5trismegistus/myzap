@@ -3,8 +3,6 @@ import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:myzap/layouts/defaultLayout.dart';
 import 'package:myzap/models/myzap_situation.dart';
-import 'package:myzap/models/myzap_task.dart';
-import 'package:myzap/utils/algolia.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:myzap/utils/userStore.dart';
 import 'package:myzap/widgets/duration_choice.dart';
