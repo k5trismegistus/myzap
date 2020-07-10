@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 abstract class MyzapModel {
-  final DocumentReference documentReference;
+  DocumentReference documentReference;
 
   MyzapModel({this.documentReference});
 

@@ -48,15 +48,11 @@ class MyzapTask extends MyzapModel {
   }
 
   Future<bool> save(DocumentReference docRef) async {
-    if (this.documentReference != null) {
-      await this.documentReference.updateData(this.toFireStoreMap());
-      return true;
+    if (this.documentReference == null && docRef != null) {
+      this.documentReference = docRef;
     }
 
-    if (docRef != null) {
-      await docRef.setData(this.toFireStoreMap());
-      return true;
-    }
+    await docRef.setData(this.toFireStoreMap());
 
     // TODO: handle error
     return false;
@@ -87,6 +83,7 @@ class MyzapTask extends MyzapModel {
         'longitude': this.location.longitude,
       },
       'completion': this.completion?.toMap(),
+      'situationsRef': this.situations.map((situation) => situation.documentReference.documentID).toList()
     };
   }
 
