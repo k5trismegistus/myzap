@@ -79,13 +79,7 @@ class _TopPageState extends State<TopPage> {
     var queriedTask = await Firestore.instance.collection('users').document(currentUser.documentReference.documentID).collection('tasks').document(selected.objectID).get();
     var taskData = queriedTask.data;
 
-    return new MyzapTask(
-      description: taskData['description'],
-      completion: MyzapDecision.fromMap(taskData['completion']),
-      declinations: (taskData['declination'] != null) ?
-        taskData['declination'].map<MyzapDecision>((d) => MyzapDecision.fromMap(Map<String,dynamic>.from(d))).toList() :
-        [],
-    );
+    return MyzapTask.fromMap(taskData, queriedTask.reference);
   }
 
   List<Widget> situationChips() {

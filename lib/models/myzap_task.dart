@@ -93,8 +93,12 @@ class MyzapTask extends MyzapModel {
       duration: data['duration'],
       location: LatLng(data['location']['latitude'], data['location']['longitude']),
       situations: [],
-      declinations: [],
-      completion: null,
+      declinations: data['declinations'] != null ? 
+        data['declinations'].map((d) => MyzapDecision.fromMap(Map<String,dynamic>.from(d))).toList() : 
+        [],
+      completion: data['completion'] != null ? 
+        MyzapDecision.fromMap(Map<String,dynamic>.from(data['completion'])) :
+        null,
       documentReference: ref,
     );
   }
