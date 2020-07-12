@@ -3,8 +3,8 @@ import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:myzap/layouts/defaultLayout.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:myzap/models/myzap_decision.dart';
 import 'package:myzap/models/myzap_situation.dart';
+import 'package:myzap/services/search_tasks.dart';
 import 'package:myzap/utils/algolia.dart';
 import 'package:myzap/models/myzap_task.dart';
 import 'package:myzap/constants/durations.dart';
@@ -56,30 +56,15 @@ class _TopPageState extends State<TopPage> {
   Future<MyzapTask> queryTask() async {
     var currentUser = UserStore().getUser();
 
-    var userFilter = 'userId:${currentUser.documentReference.documentID}';
-    var selectedSituationIdFilter = this._choices
+    var selectedSituations = this._choices
       .where((c) => c.selected)
-      .map((c) => c.instance.documentReference.documentID)
-      .toList()
-      .join(' OR ');
+      .map((c) => c.instance)
+      .toList();
 
-    var _snap = await AlgoliaStore
-      .getInstance()
-      .index('tasks')
-      .setFacetFilter(userFilter)
-      .setFacetFilter(selectedSituationIdFilter)
-      .search('')
-      .getObjects();
+    var selectedTasks = await (new SearchTasksService(currentUser, selectedSituations, '')).call();
+    var selectedTask = (selectedTasks..shuffle()).first;
 
-    if (_snap.hits.length == 0) {
-      return null;
-    }
-
-    var selected = (_snap.hits..shuffle()).first;
-    var queriedTask = await Firestore.instance.collection('users').document(currentUser.documentReference.documentID).collection('tasks').document(selected.objectID).get();
-    var taskData = queriedTask.data;
-
-    return MyzapTask.fromMap(taskData, queriedTask.reference);
+    return selectedTask;
   }
 
   List<Widget> situationChips() {
