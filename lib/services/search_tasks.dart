@@ -32,19 +32,15 @@ class SearchTasksService {
 
     var documentIDs = _snap.hits.map((d) => d.objectID).toList();
 
-    var snapshot = Firestore.instance.collection('users')
+    var data = await Firestore.instance.collection('users')
       .document(this.user.documentReference.documentID)
       .collection('tasks')
       .where(FieldPath.documentId, whereIn: documentIDs)
-      .snapshots();
+      .getDocuments();
 
-    List<MyzapTask> results = [];
-
-    snapshot.listen((data) {
-      data.documents.map((document) {
-        results.add(MyzapTask.fromMap(document.data, document.reference));
-      }).toList();
-    });
+    List<MyzapTask> results = data.documents.map((document) {
+      MyzapTask.fromMap(document.data, document.reference);
+    }).toList();
 
     return results;
   }
