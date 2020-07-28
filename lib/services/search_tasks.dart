@@ -39,7 +39,7 @@ class SearchTasksService {
       .getDocuments();
 
     List<MyzapTask> results = data.documents.map((document) {
-      MyzapTask.fromMap(document.data, document.reference);
+      return MyzapTask.fromMap(document.data, document.reference);
     }).toList();
 
     return results;
