@@ -4,6 +4,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:myzap/layouts/defaultLayout.dart';
 import "package:google_maps_webservice/places.dart";
 import 'package:flutter_typeahead/flutter_typeahead.dart';
+import 'package:myzap/layouts/loadableLayout.dart';
 import 'package:myzap/utils/userStore.dart';
 
 class AddPersonalPlacePage extends StatefulWidget {
@@ -11,7 +12,7 @@ class AddPersonalPlacePage extends StatefulWidget {
   _AddPersonalPlacePageState createState() => _AddPersonalPlacePageState();
 }
 
-class _AddPersonalPlacePageState extends State<AddPersonalPlacePage> {
+class _AddPersonalPlacePageState extends LoadablePage<AddPersonalPlacePage> {
 
   GoogleMapsPlaces _places = GoogleMapsPlaces(apiKey: DotEnv().env['GOOGLE_MAPS_API_KEY']);
   LatLng _location = LatLng(35.681236,139.767125);
@@ -39,8 +40,7 @@ class _AddPersonalPlacePageState extends State<AddPersonalPlacePage> {
     Navigator.pushReplacementNamed(context, '/personalPlaces');
   }
 
-  @override
-  Widget build(BuildContext context) {
+  Widget buildBody(BuildContext context) {
     return DefaultLayout(
       title: 'Add new personal place',
       page: Container(

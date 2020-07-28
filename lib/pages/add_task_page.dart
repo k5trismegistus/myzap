@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:myzap/layouts/defaultLayout.dart';
+import 'package:myzap/layouts/loadableLayout.dart';
 import 'package:myzap/models/myzap_situation.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:myzap/utils/userStore.dart';
@@ -26,14 +27,14 @@ class AddTaskPage extends StatefulWidget {
 }
 
 
-class _AddTaskPageState extends State<AddTaskPage> {
+class _AddTaskPageState extends LoadablePage<AddTaskPage> {
+  final title = 'Add new task';
 
   final TextEditingController _desriptionInputController = TextEditingController();
   final TextEditingController _situationInputController = TextEditingController();
 
   List<FetchedSituation> _selectedSituations = [];
   Duration _selectedDuration = durations.first;
-  bool _loading = false;
 
   List<FetchedSituation> fetchSituations(String inputedText) {
     var currentUser = UserStore().getUser();
@@ -82,9 +83,7 @@ class _AddTaskPageState extends State<AddTaskPage> {
   }
 
   Future<void> handleAddTask() async {
-    this.setState(() {
-      this._loading = true;
-    });
+    this.setLoading();
 
     var currentUser = UserStore().getUser();
 
@@ -100,14 +99,14 @@ class _AddTaskPageState extends State<AddTaskPage> {
       situations: this._selectedSituations.map((s) => s.instance).toList(),
     );
 
+    this.unsetLoading();
     Navigator.pushReplacementNamed(context, '/top');
   }
 
-  @override
-  Widget build(BuildContext context) {
+  Widget buildBody(BuildContext context) {
     Geolocator().checkGeolocationPermissionStatus();
 
-    var body = Container(
+    return Container(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: <Widget>[
@@ -159,10 +158,5 @@ class _AddTaskPageState extends State<AddTaskPage> {
           ]
         )
       );
-
-    return DefaultLayout(
-      title: 'Add new task',
-      page: this._loading ? WaitingWidget(bgPage: body) : body
-    );
   }
 }
