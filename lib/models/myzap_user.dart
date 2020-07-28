@@ -133,4 +133,17 @@ class MyzapUser extends MyzapModel {
     await personalPlace.save(newPersonalPlaceDocRef);
     return personalPlace;
   }
+
+  Future<List<MyzapPersonalPlace>> getPersonalPlaces() async {
+    var data = await Firestore.instance.collection('users')
+      .document(this.documentReference.documentID)
+      .collection('personal_places')
+      .getDocuments();
+
+    List<MyzapPersonalPlace> results = data.documents.map((document) {
+      return MyzapPersonalPlace.fromMap(document.data, document.reference);
+    }).toList();
+
+    return results;
+  }
 }

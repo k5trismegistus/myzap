@@ -25,8 +25,8 @@ class MyzapPersonalPlace extends MyzapModel {
     return new MyzapPersonalPlace(
       name: data['name'],
       location: LatLng(
-        data['latitude'],
-        data['longitude'],
+        data['location']['latitude'],
+        data['location']['longitude'],
       ),
       documentReference: ref,
     );
