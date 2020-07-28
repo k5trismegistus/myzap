@@ -1,10 +1,7 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:myzap/layouts/defaultLayout.dart';
+import 'package:myzap/layouts/loadableLayout.dart';
 import 'package:myzap/models/myzap_personal_place.dart';
 import 'package:myzap/utils/userStore.dart';
-import 'package:myzap/widgets/waiting.dart';
 
 class PersonalPlacesPage extends StatefulWidget {
 
@@ -12,40 +9,27 @@ class PersonalPlacesPage extends StatefulWidget {
   _PersonalPlacesPageState createState() => _PersonalPlacesPageState();
 }
 
-class _PersonalPlacesPageState extends State<PersonalPlacesPage> {
-  bool _loading = true;
-  List<MyzapPersonalPlace> _personalPlaces = [];
+class _PersonalPlacesPageState extends LoadablePage<PersonalPlacesPage> {
+  final title = 'Personal Places';
 
+  List<MyzapPersonalPlace> _personalPlaces = [];
 
   void initState() {
     super.initState();
+    this.setLoading();
     this.fetchPersonalPlaces();
   }
 
   Future<void> fetchPersonalPlaces() async {
     var currentUser = UserStore().getUser();
-    var userId = currentUser.uid();
 
-    var snapshot = Firestore.instance.collection('personalPlaces').where('userRef', isEqualTo: '/users/$userId').snapshots();
-    List<MyzapPersonalPlace> _fetched = this._personalPlaces;
-    snapshot.listen((data) {
-      data.documents.forEach((doc) {
-        var d = doc.data;
-        _fetched.add(MyzapPersonalPlace(
-          id: doc.documentID,
-          name: d['name'],
-          location: LatLng(
-            d['location']['latitude'],
-            d['location']['longitude'],
-          )
-        ));
-      });
+    var places = await currentUser.getPersonalPlaces();
 
-      this.setState(() {
-        this._loading = false;
-        this._personalPlaces = _fetched;
-      });
+    this.setState(() {
+      this._personalPlaces = places;
     });
+
+    this.unsetLoading();
   }
 
   List<Widget> buildPlacesList() {
@@ -59,22 +43,20 @@ class _PersonalPlacesPageState extends State<PersonalPlacesPage> {
     }).toList();
   }
 
+  Widget buildFloatingButton(BuildContext context) {
+    return FloatingActionButton(
+      onPressed: () => Navigator.pushNamed(context, '/addPersonalPlace'),
+      tooltip: 'Add new personal place',
+      child: Icon(Icons.add),
+    );
+  }
+
   @override
-  Widget build(BuildContext context) {
-    var body = Container(
+  Widget buildBody(BuildContext context) {
+    return Container(
       child: ListView(
         children: this.buildPlacesList()
-      ),
-    );
-
-    return DefaultLayout(
-      title: 'Personal Places',
-      page: this._loading ? WaitingWidget(bgPage: body) : body,
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => Navigator.pushNamed(context, '/addPersonalPlace'),
-        tooltip: 'Add new personal place',
-        child: Icon(Icons.add),
-      ), //
+      )
     );
   }
 }

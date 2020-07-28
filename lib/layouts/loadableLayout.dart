@@ -8,6 +8,7 @@ abstract class LoadablePage<T> extends State<StatefulWidget> {
   Widget floatingActionButton;
 
   Widget buildBody(BuildContext context);
+  Widget buildFloatingButton(BuildContext context) { return null; }
 
   void setLoading() {
     this.setState(() {
@@ -21,9 +22,12 @@ abstract class LoadablePage<T> extends State<StatefulWidget> {
     });
   }
 
+
+
   @override
   Widget build(BuildContext context) {
     var body = buildBody(context);
+
 
     return DefaultLayout(
       title: this.title,
