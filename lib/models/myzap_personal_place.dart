@@ -3,12 +3,10 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:myzap/models/myzap_model.dart';
 
 class MyzapPersonalPlace extends MyzapModel {
-  final String id;
   final String name;
   final LatLng location;
 
   MyzapPersonalPlace({
-    this.id,
     this.name,
     this.location,
     DocumentReference documentReference
@@ -16,7 +14,6 @@ class MyzapPersonalPlace extends MyzapModel {
 
   Map<String, dynamic> toMap() {
     return {
-      'id': this.id,
       'name': this.name,
       'location': {
         'latitude': this.location.latitude,
@@ -26,7 +23,6 @@ class MyzapPersonalPlace extends MyzapModel {
   }
   static MyzapPersonalPlace fromMap(data, ref) {
     return new MyzapPersonalPlace(
-      id: data['id'],
       name: data['name'],
       location: LatLng(
         data['latitude'],
@@ -36,12 +32,16 @@ class MyzapPersonalPlace extends MyzapModel {
     );
   }
 
-  static MyzapPersonalPlace initialize({String id, String name, LatLng location}) {
-    return new MyzapPersonalPlace(id: id, name: name, location: location);
+  static MyzapPersonalPlace initialize({String name, LatLng location}) {
+    return new MyzapPersonalPlace(name: name, location: location);
   }
 
   Future<bool> save(DocumentReference docRef) async {
-    await docRef.setData(this.toMap());
+    if (this.documentReference == null && docRef != null) {
+      this.documentReference = docRef;
+    }
+
+    await this.documentReference.setData(this.toMap());
     return true;
   }
 }
