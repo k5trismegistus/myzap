@@ -29,20 +29,13 @@ class _AddPersonalPlacePageState extends State<AddPersonalPlacePage> {
 
   Future<void> handleAddPersonalPlace() async {
     var currentUser = UserStore().getUser();
-    var userId = currentUser.uid();
 
     var name = _titleInputController.text;
 
-    var newSituationRef = Firestore.instance.collection('personalPlaces').document();
-
-    await newSituationRef.setData({
-      'userRef': '/users/$userId',
-      'name': name,
-      'location': {
-        'lattitude': _location.latitude,
-        'longitude': _location.longitude
-      }
-    });
+    await currentUser.addPersonalPlace(
+      name: name,
+      location: LatLng(_location.latitude, _location.longitude)
+    );
 
     Navigator.pushReplacementNamed(context, '/personalPlaces');
   }

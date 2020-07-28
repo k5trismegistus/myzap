@@ -35,13 +35,4 @@ class MyzapPersonalPlace extends MyzapModel {
   static MyzapPersonalPlace initialize({String name, LatLng location}) {
     return new MyzapPersonalPlace(name: name, location: location);
   }
-
-  Future<bool> save(DocumentReference docRef) async {
-    if (this.documentReference == null && docRef != null) {
-      this.documentReference = docRef;
-    }
-
-    await this.documentReference.setData(this.toMap());
-    return true;
-  }
 }

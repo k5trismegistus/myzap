@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:myzap/models/myzap_personal_place.dart';
 import 'package:myzap/models/myzap_situation.dart';
 import 'package:myzap/models/myzap_task.dart';
 import 'myzap_decision.dart';
@@ -117,5 +118,19 @@ class MyzapUser extends MyzapModel {
 
     await situation.save(newSituationDocRef);
     return situation;
+  }
+
+  Future<MyzapPersonalPlace> addPersonalPlace({
+    String name,
+    LatLng location,
+  }) async {
+    var personalPlace = MyzapPersonalPlace.initialize(
+      name: name,
+      location: location,
+    );
+    var newPersonalPlaceDocRef = this.documentReference.collection('personal_places').document();
+
+    await personalPlace.save(newPersonalPlaceDocRef);
+    return personalPlace;
   }
 }
