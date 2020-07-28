@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:myzap/layouts/defaultLayout.dart';
 import 'package:myzap/layouts/loadableLayout.dart';
 import 'package:myzap/models/myzap_situation.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:myzap/utils/userStore.dart';
 import 'package:myzap/widgets/duration_choice.dart';
-import 'package:myzap/widgets/waiting.dart';
 import 'package:myzap/constants/durations.dart';
 
 class FetchedSituation {

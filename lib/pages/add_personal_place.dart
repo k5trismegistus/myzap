@@ -13,6 +13,7 @@ class AddPersonalPlacePage extends StatefulWidget {
 }
 
 class _AddPersonalPlacePageState extends LoadablePage<AddPersonalPlacePage> {
+  String title = 'Add new personal place';
 
   GoogleMapsPlaces _places = GoogleMapsPlaces(apiKey: DotEnv().env['GOOGLE_MAPS_API_KEY']);
   LatLng _location = LatLng(35.681236,139.767125);
@@ -28,6 +29,7 @@ class _AddPersonalPlacePageState extends LoadablePage<AddPersonalPlacePage> {
   }
 
   Future<void> handleAddPersonalPlace() async {
+    this.setLoading();
     var currentUser = UserStore().getUser();
 
     var name = _titleInputController.text;
@@ -37,73 +39,72 @@ class _AddPersonalPlacePageState extends LoadablePage<AddPersonalPlacePage> {
       location: LatLng(_location.latitude, _location.longitude)
     );
 
+    this.unsetLoading();
+
     Navigator.pushReplacementNamed(context, '/personalPlaces');
   }
 
   Widget buildBody(BuildContext context) {
-    return DefaultLayout(
-      title: 'Add new personal place',
-      page: Container(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: <Widget>[
-            TextField(
-              controller: _titleInputController,
-              decoration: InputDecoration(hintText: 'Name'),
+    return Container(
+      padding: const EdgeInsets.all(16.0),
+      child: Column(
+        children: <Widget>[
+          TextField(
+            controller: _titleInputController,
+            decoration: InputDecoration(hintText: 'Name'),
+          ),
+          TypeAheadField(
+            textFieldConfiguration: TextFieldConfiguration(
+              controller: _locTypeAheadController,
             ),
-            TypeAheadField(
-              textFieldConfiguration: TextFieldConfiguration(
-                controller: _locTypeAheadController,
-              ),
-              suggestionsCallback: (pattern) async {
-                var resp = await this._places.searchByText(pattern);
-                return resp.results.map((rst) {
-                  return rst;
-                }).toList();
+            suggestionsCallback: (pattern) async {
+              var resp = await this._places.searchByText(pattern);
+              return resp.results.map((rst) {
+                return rst;
+              }).toList();
+            },
+            itemBuilder: (context, PlacesSearchResult suggestion) {
+              return ListTile(
+                title: Text(suggestion.name),
+              );
+            },
+            onSuggestionSelected: (PlacesSearchResult suggestion) {
+              var loc = LatLng(suggestion.geometry.location.lat, suggestion.geometry.location.lng);
+              this.setState(() {
+                this._locTypeAheadController.text = suggestion.name;
+                this._location = loc;
+                this._googleMapController.animateCamera(CameraUpdate.newCameraPosition(
+                  CameraPosition(target: loc, zoom: 17.0)
+                ));
+                this._markers = {Marker(
+                  markerId: MarkerId(suggestion.name),
+                  position: loc,
+                  infoWindow: InfoWindow(
+                    title: suggestion.name,
+                  ),
+                )};
+              });
+            }
+          ),
+          SizedBox(
+            height: 200,
+            child: GoogleMap(
+              onMapCreated: (GoogleMapController controller) {
+                this._googleMapController = controller;
               },
-              itemBuilder: (context, PlacesSearchResult suggestion) {
-                return ListTile(
-                  title: Text(suggestion.name),
-                );
-              },
-              onSuggestionSelected: (PlacesSearchResult suggestion) {
-                var loc = LatLng(suggestion.geometry.location.lat, suggestion.geometry.location.lng);
-                this.setState(() {
-                  this._locTypeAheadController.text = suggestion.name;
-                  this._location = loc;
-                  this._googleMapController.animateCamera(CameraUpdate.newCameraPosition(
-                    CameraPosition(target: loc, zoom: 17.0)
-                  ));
-                  this._markers = {Marker(
-                    markerId: MarkerId(suggestion.name),
-                    position: loc,
-                    infoWindow: InfoWindow(
-                      title: suggestion.name,
-                    ),
-                  )};
-                });
-              }
-            ),
-            SizedBox(
-              height: 200,
-              child: GoogleMap(
-                onMapCreated: (GoogleMapController controller) {
-                  this._googleMapController = controller;
-                },
-                initialCameraPosition: CameraPosition(
-                  target: this._location,
-                  zoom: 17.0,
-                ),
-                myLocationEnabled: true,
-                markers: this._markers,
+              initialCameraPosition: CameraPosition(
+                target: this._location,
+                zoom: 17.0,
               ),
+              myLocationEnabled: true,
+              markers: this._markers,
             ),
-            FlatButton(
-              child: Text('Register'),
-              onPressed: this.registerable() ? this.handleAddPersonalPlace: null,
-            )
-          ]
-        )
+          ),
+          FlatButton(
+            child: Text('Register'),
+            onPressed: this.registerable() ? this.handleAddPersonalPlace: null,
+          )
+        ]
       )
     );
   }

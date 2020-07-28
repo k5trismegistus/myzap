@@ -4,17 +4,21 @@ import 'package:myzap/widgets/waiting.dart';
 
 abstract class LoadablePage<T> extends State<StatefulWidget> {
   String title;
-  bool loading;
+  bool loading = false;
   Widget floatingActionButton;
 
   Widget buildBody(BuildContext context);
 
   void setLoading() {
-    this.loading = true;
+    this.setState(() {
+      this.loading = true;
+    });
   }
 
   void unsetLoading() {
-    this.loading = false;
+    this.setState(() {
+      this.loading = false;
+    });
   }
 
   @override
