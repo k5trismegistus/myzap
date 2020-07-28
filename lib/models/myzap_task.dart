@@ -47,17 +47,6 @@ class MyzapTask extends MyzapModel {
     return task;
   }
 
-  Future<bool> save(DocumentReference docRef) async {
-    if (this.documentReference == null && docRef != null) {
-      this.documentReference = docRef;
-    }
-
-    await docRef.setData(this.toFireStoreMap());
-
-    // TODO: handle error
-    return false;
-  }
-
   Map<String, dynamic> toMap() {
     return {
       'description': this.description,
@@ -93,10 +82,10 @@ class MyzapTask extends MyzapModel {
       duration: data['duration'],
       location: LatLng(data['location']['latitude'], data['location']['longitude']),
       situations: [],
-      declinations: data['declinations'] != null ? 
-        data['declinations'].map((d) => MyzapDecision.fromMap(Map<String,dynamic>.from(d))).toList() : 
+      declinations: data['declinations'] != null ?
+        data['declinations'].map((d) => MyzapDecision.fromMap(Map<String,dynamic>.from(d))).toList() :
         [],
-      completion: data['completion'] != null ? 
+      completion: data['completion'] != null ?
         MyzapDecision.fromMap(Map<String,dynamic>.from(data['completion'])) :
         null,
       documentReference: ref,

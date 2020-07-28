@@ -25,9 +25,4 @@ class MyzapSituation extends MyzapModel{
   static MyzapSituation initialize({String id, String label}) {
     return new MyzapSituation(label: label);
   }
-
-  Future<bool> save(DocumentReference docRef) async {
-    await docRef.setData(this.toMap());
-    return true;
-  }
 }

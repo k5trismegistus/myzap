@@ -43,19 +43,4 @@ class MyzapDecision extends MyzapModel {
       'type': this.type,
     };
   }
-
-  Future<bool> save(DocumentReference docRef) async {
-    if (this.documentReference != null) {
-      await this.documentReference.updateData(this.toMap());
-      return true;
-    }
-
-    if (docRef != null) {
-      await docRef.setData(this.toMap());
-      return true;
-    }
-
-    // TODO: handle error
-    return false;
-  }
 }
