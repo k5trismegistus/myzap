@@ -13,13 +13,13 @@ class MyzapUser extends MyzapModel {
   final List<MyzapSituation> situations;
   final FirebaseUser firebaseUser;
 
-  MyzapUser({
-    this.id,
-    this.tasks,
-    this.situations,
-    this.firebaseUser,
-    DocumentReference documentReference
-  }) : super(documentReference: documentReference);
+  MyzapUser(
+      {this.id,
+      this.tasks,
+      this.situations,
+      this.firebaseUser,
+      DocumentReference documentReference})
+      : super(documentReference: documentReference);
 
   String uid() {
     return this.firebaseUser.uid;
@@ -42,16 +42,15 @@ class MyzapUser extends MyzapModel {
 
   static Future<MyzapUser> initOrCreate(FirebaseUser firebaseUser) async {
     var uid = firebaseUser.uid;
-    var query = Firestore.instance.collection("users").where('uid', isEqualTo: uid);
+    var query =
+        Firestore.instance.collection("users").where('uid', isEqualTo: uid);
     var records = (await query.getDocuments()).documents;
 
     var recordLength = records.length;
 
     // If user record didn't exist on firestore
     if (recordLength == 0) {
-      var documentReference = Firestore.instance
-        .collection("users")
-        .document();
+      var documentReference = Firestore.instance.collection("users").document();
 
       await documentReference.setData({
         'uid': uid,
@@ -67,14 +66,17 @@ class MyzapUser extends MyzapModel {
 
     var documentReference = records.first.reference;
 
-    var tasksRecords = await documentReference.collection('tasks').getDocuments();
+    var tasksRecords =
+        await documentReference.collection('tasks').getDocuments();
     var tasks = tasksRecords.documents.map((taskRecord) {
       return MyzapTask.fromMap(taskRecord.data, taskRecord.reference);
     }).toList();
 
-    var situationsRecords = await documentReference.collection('situations').getDocuments();
+    var situationsRecords =
+        await documentReference.collection('situations').getDocuments();
     var situations = situationsRecords.documents.map((situationRecord) {
-      return MyzapSituation.fromMap(situationRecord.data, situationRecord.reference);
+      return MyzapSituation.fromMap(
+          situationRecord.data, situationRecord.reference);
     }).toList();
 
     return new MyzapUser(
@@ -111,10 +113,9 @@ class MyzapUser extends MyzapModel {
   Future<MyzapSituation> addSituation({
     String label,
   }) async {
-    var situation = MyzapSituation.initialize(
-      label: label,
-    );
-    var newSituationDocRef = this.documentReference.collection('situations').document();
+    var situation = MyzapSituation.initialize(label: label, referenceCount: 0);
+    var newSituationDocRef =
+        this.documentReference.collection('situations').document();
 
     await situation.save(newSituationDocRef);
     return situation;
@@ -128,17 +129,19 @@ class MyzapUser extends MyzapModel {
       name: name,
       location: location,
     );
-    var newPersonalPlaceDocRef = this.documentReference.collection('personal_places').document();
+    var newPersonalPlaceDocRef =
+        this.documentReference.collection('personal_places').document();
 
     await personalPlace.save(newPersonalPlaceDocRef);
     return personalPlace;
   }
 
   Future<List<MyzapPersonalPlace>> getPersonalPlaces() async {
-    var data = await Firestore.instance.collection('users')
-      .document(this.documentReference.documentID)
-      .collection('personal_places')
-      .getDocuments();
+    var data = await Firestore.instance
+        .collection('users')
+        .document(this.documentReference.documentID)
+        .collection('personal_places')
+        .getDocuments();
 
     List<MyzapPersonalPlace> results = data.documents.map((document) {
       return MyzapPersonalPlace.fromMap(document.data, document.reference);
