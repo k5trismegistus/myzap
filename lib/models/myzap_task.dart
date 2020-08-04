@@ -13,16 +13,16 @@ class MyzapTask extends MyzapModel {
   final List<MyzapDecision> declinations;
   final List<MyzapSituation> situations;
 
-  MyzapTask({
-    this.description,
-    this.situations,
-    this.duration,
-    this.createdAt,
-    this.location,
-    this.completion,
-    this.declinations,
-    DocumentReference documentReference
-  }) : super(documentReference: documentReference);
+  MyzapTask(
+      {this.description,
+      this.situations,
+      this.duration,
+      this.createdAt,
+      this.location,
+      this.completion,
+      this.declinations,
+      DocumentReference documentReference})
+      : super(documentReference: documentReference);
 
   static MyzapTask initialize({
     String description,
@@ -47,6 +47,7 @@ class MyzapTask extends MyzapModel {
     return task;
   }
 
+  @override
   Map<String, dynamic> toMap() {
     return {
       'description': this.description,
@@ -62,6 +63,7 @@ class MyzapTask extends MyzapModel {
     };
   }
 
+  @override
   Map<String, dynamic> toFireStoreMap() {
     return {
       'description': this.description,
@@ -72,7 +74,10 @@ class MyzapTask extends MyzapModel {
         'longitude': this.location.longitude,
       },
       'completion': this.completion?.toMap(),
-      'situationsRef': this.situations.map((situation) => situation.documentReference.documentID).toList()
+      'situationsRef': this
+          .situations
+          .map((situation) => situation.documentReference.documentID)
+          .toList()
     };
   }
 
@@ -80,14 +85,17 @@ class MyzapTask extends MyzapModel {
     return new MyzapTask(
       description: data['description'],
       duration: data['duration'],
-      location: LatLng(data['location']['latitude'], data['location']['longitude']),
-      situations: [],
-      declinations: data['declinations'] != null ?
-        data['declinations'].map((d) => MyzapDecision.fromMap(Map<String,dynamic>.from(d))).toList() :
-        [],
-      completion: data['completion'] != null ?
-        MyzapDecision.fromMap(Map<String,dynamic>.from(data['completion'])) :
-        null,
+      location:
+          LatLng(data['location']['latitude'], data['location']['longitude']),
+      situations: [], // TODO: Load situations
+      declinations: data['declinations'] != null
+          ? data['declinations']
+              .map((d) => MyzapDecision.fromMap(Map<String, dynamic>.from(d)))
+              .toList()
+          : [],
+      completion: data['completion'] != null
+          ? MyzapDecision.fromMap(Map<String, dynamic>.from(data['completion']))
+          : null,
       documentReference: ref,
     );
   }
@@ -96,31 +104,25 @@ class MyzapTask extends MyzapModel {
     var currentTime = DateTime.now();
 
     var decision = MyzapDecision(
-      madeAt: currentTime,
-      madeLocation: decidedLocation,
-      type: type
-    );
+        madeAt: currentTime, madeLocation: decidedLocation, type: type);
 
     if (type == 'accept') {
-      await this.documentReference
-        .updateData({
-          'completion': decision.toMap(),
-        });
+      await this.documentReference.updateData({
+        'completion': decision.toMap(),
+      });
       return true;
     }
 
     // TODO: Use subcollection
     if (type == 'decline') {
-      var declineDocref = this.documentReference
-        .collection('declinations')
-        .document();
+      var declineDocref =
+          this.documentReference.collection('declinations').document();
 
       decision.save(declineDocref);
 
-
-        // .updateData({
-        //   'declination': [...(this.declinations != null ? this.declinations : []).map((d) => d.toMap()), decision.toMap()],
-        // });
+      // .updateData({
+      //   'declination': [...(this.declinations != null ? this.declinations : []).map((d) => d.toMap()), decision.toMap()],
+      // });
       return true;
     }
 
