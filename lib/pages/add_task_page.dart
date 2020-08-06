@@ -10,7 +10,8 @@ import 'package:myzap/constants/durations.dart';
 
 class FetchedSituation {
   MyzapSituation instance;
-  bool nullPlaceholder; // if this value is true, this instance represent special value.
+  bool
+      nullPlaceholder; // if this value is true, this instance represent special value.
 
   FetchedSituation(this.instance, this.nullPlaceholder);
 }
@@ -24,12 +25,13 @@ class AddTaskPage extends StatefulWidget {
   _AddTaskPageState createState() => _AddTaskPageState();
 }
 
-
 class _AddTaskPageState extends LoadablePage<AddTaskPage> {
   final title = 'Add new task';
 
-  final TextEditingController _desriptionInputController = TextEditingController();
-  final TextEditingController _situationInputController = TextEditingController();
+  final TextEditingController _desriptionInputController =
+      TextEditingController();
+  final TextEditingController _situationInputController =
+      TextEditingController();
 
   List<FetchedSituation> _selectedSituations = [];
   Duration _selectedDuration = durations.first;
@@ -37,7 +39,10 @@ class _AddTaskPageState extends LoadablePage<AddTaskPage> {
   List<FetchedSituation> fetchSituations(String inputedText) {
     var currentUser = UserStore().getUser();
 
-    var lst = currentUser.situations.map((sit) => FetchedSituation(sit, false)).toList();
+    // TODO: Filter only situation which contain input string
+    var lst = currentUser.situations
+        .map((sit) => FetchedSituation(sit, false))
+        .toList();
     lst.add(new FetchedSituation(null, true));
     return lst;
   }
@@ -66,7 +71,8 @@ class _AddTaskPageState extends LoadablePage<AddTaskPage> {
 
   Future<void> handleSelectSituation(FetchedSituation suggestion) async {
     if (suggestion.nullPlaceholder) {
-      var newSit = await this.handleAddSituation(this._situationInputController.text);
+      var newSit =
+          await this.handleAddSituation(this._situationInputController.text);
       setState(() {
         this._situationInputController.text = '';
         this._selectedSituations.add(newSit);
@@ -85,7 +91,8 @@ class _AddTaskPageState extends LoadablePage<AddTaskPage> {
 
     var currentUser = UserStore().getUser();
 
-    Position position = await Geolocator().getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+    Position position = await Geolocator()
+        .getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
 
     await currentUser.addTask(
       description: this._desriptionInputController.text,
@@ -106,13 +113,12 @@ class _AddTaskPageState extends LoadablePage<AddTaskPage> {
 
     return Container(
         padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: <Widget>[
-            TextField(
-              controller: _desriptionInputController,
-              decoration: InputDecoration(hintText: 'Task description'),
-            ),
-            TypeAheadField(
+        child: Column(children: <Widget>[
+          TextField(
+            controller: _desriptionInputController,
+            decoration: InputDecoration(hintText: 'Task description'),
+          ),
+          TypeAheadField(
               textFieldConfiguration: TextFieldConfiguration(
                 controller: this._situationInputController,
               ),
@@ -126,35 +132,30 @@ class _AddTaskPageState extends LoadablePage<AddTaskPage> {
                   );
                 }
                 return ListTile(
-                  title: Text("Add new situation \"${this._situationInputController.text}\"")
-                );
+                    title: Text(
+                        "Add new situation \"${this._situationInputController.text}\""));
               },
-              onSuggestionSelected: this.handleSelectSituation
-            ),
-            Expanded(
+              onSuggestionSelected: this.handleSelectSituation),
+          Expanded(
               child: Wrap(
-                alignment: WrapAlignment.start,
-                spacing: 8.0,
-                runSpacing: 0.0,
-                direction: Axis.horizontal,
-                children: this.situationChips()
-              )
-            ),
-            DurationChoice(
-              selectable: true,
-              selected: this._selectedDuration,
-              onSelected: (duration) {
-                this.setState(() {
-                  this._selectedDuration = duration;
-                });
-              },
-            ),
-            FlatButton(
-              child: Text('Add'),
-              onPressed: this.handleAddTask,
-            )
-          ]
-        )
-      );
+                  alignment: WrapAlignment.start,
+                  spacing: 8.0,
+                  runSpacing: 0.0,
+                  direction: Axis.horizontal,
+                  children: this.situationChips())),
+          DurationChoice(
+            selectable: true,
+            selected: this._selectedDuration,
+            onSelected: (duration) {
+              this.setState(() {
+                this._selectedDuration = duration;
+              });
+            },
+          ),
+          FlatButton(
+            child: Text('Add'),
+            onPressed: this.handleAddTask,
+          )
+        ]));
   }
 }

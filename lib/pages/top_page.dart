@@ -26,7 +26,6 @@ class TopPage extends StatefulWidget {
 }
 
 class _TopPageState extends State<TopPage> {
-
   List<SelectableSituation> _choices = [];
 
   @override
@@ -45,7 +44,9 @@ class _TopPageState extends State<TopPage> {
 
   List<SelectableSituation> fetchSituationSuggests() {
     var currentUser = UserStore().getUser();
+    // TODO: reloading
     var rst = currentUser.situations.map((sit) {
+      // TODO: Filter only situations whose reference count > 0
       return new SelectableSituation(sit);
     }).toList();
     return rst;
@@ -54,12 +55,12 @@ class _TopPageState extends State<TopPage> {
   Future<MyzapTask> queryTask() async {
     var currentUser = UserStore().getUser();
 
-    var selectedSituations = this._choices
-      .where((c) => c.selected)
-      .map((c) => c.instance)
-      .toList();
+    var selectedSituations =
+        this._choices.where((c) => c.selected).map((c) => c.instance).toList();
 
-    var selectedTasks = await (new SearchTasksService(currentUser, selectedSituations, '')).call();
+    var selectedTasks =
+        await (new SearchTasksService(currentUser, selectedSituations, ''))
+            .call();
     var selectedTask = (selectedTasks..shuffle()).first;
 
     return selectedTask;
@@ -68,18 +69,20 @@ class _TopPageState extends State<TopPage> {
   List<Widget> situationChips() {
     return this._choices.map((choice) {
       return InputChip(
-        label: Text(choice.instance.label),
-        labelStyle: TextStyle(color: choice.selected ? Colors.black : Colors.grey, fontSize: 16),
-        onPressed: () {
-          setState(()  => choice.selected = !choice.selected);
-        }
-      );
+          label: Text(choice.instance.label),
+          labelStyle: TextStyle(
+              color: choice.selected ? Colors.black : Colors.grey,
+              fontSize: 16),
+          onPressed: () {
+            setState(() => choice.selected = !choice.selected);
+          });
     }).toList();
   }
 
   void showAction(Duration duration) async {
     var task = await this.queryTask();
-    var position = await Geolocator().getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+    var position = await Geolocator()
+        .getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
     var currentLocation = LatLng(
       position.latitude,
       position.longitude,
@@ -95,7 +98,7 @@ class _TopPageState extends State<TopPage> {
             actions: <Widget>[
               FlatButton(
                 child: Text("OK"),
-                onPressed: ()  => Navigator.pop(context),
+                onPressed: () => Navigator.pop(context),
               ),
             ],
           );
@@ -137,40 +140,30 @@ class _TopPageState extends State<TopPage> {
       title: widget.title,
       page: Container(
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Expanded(
-                  child: Wrap(
-                    alignment: WrapAlignment.start,
-                    spacing: 8.0,
-                    runSpacing: 0.0,
-                    direction: Axis.horizontal,
-                    children: this.situationChips()
-                  )
-                )
-              ]
-            ),
-            FlatButton(
-              onPressed: this._loadChoices,
-              color: Colors.blue,
-              child: Text(
-                'Reload',
-                style: TextStyle(
-                  color:Colors.white,
-                  fontSize: 20.0
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Expanded(
+                        child: Wrap(
+                            alignment: WrapAlignment.start,
+                            spacing: 8.0,
+                            runSpacing: 0.0,
+                            direction: Axis.horizontal,
+                            children: this.situationChips()))
+                  ]),
+              FlatButton(
+                onPressed: this._loadChoices,
+                color: Colors.blue,
+                child: Text(
+                  'Reload',
+                  style: TextStyle(color: Colors.white, fontSize: 20.0),
                 ),
               ),
-            ),
-            DurationChoice(
-              selectable: false,
-              onSelected: this.showAction
-            ),
-          ]
-        ),
+              DurationChoice(selectable: false, onSelected: this.showAction),
+            ]),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () => Navigator.pushNamed(context, '/addTask'),
