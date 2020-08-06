@@ -74,9 +74,9 @@ class MyzapTask extends MyzapModel {
         'longitude': this.location.longitude,
       },
       'completion': this.completion?.toMap(),
-      'situationsRef': this
+      'situationRefs': this
           .situations
-          .map((situation) => situation.documentReference.documentID)
+          .map((situation) => situation.documentReference)
           .toList()
     };
   }
